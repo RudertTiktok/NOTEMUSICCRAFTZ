@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Open Note Block Studio Superior - Versi Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); } 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); } }
+        @keyframes slideHead { 0% { transform: translateX(0); } 100% { transform: translateX(100vw); } }
+        @keyframes expandLayer { 0% { max-height: 0; opacity: 0; } 100% { max-height: 300px; opacity: 1; } }
+        @keyframes ripple { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+        @keyframes progressGlow { 0% { box-shadow: 0 0 5px #4CAF50; } 50% { box-shadow: 0 0 20px #4CAF50; } 100% { box-shadow: 0 0 5px #4CAF50; } }
+        @keyframes keyHover { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        body { 
+            font-family: 'Press Start 2P', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-size: 10px; margin: 0; padding: 0; 
+            background: linear-gradient(135deg, #2b2b2b, #1a1a1a); color: #fff; overflow: hidden; transition: background 0.3s; 
+        }
+        body.light { background: linear-gradient(135deg, #f0f0f0, #e0e0e0); color: #000; }
+        #menu { 
+            background: rgba(51, 51, 51, 0.9); padding: 5px; display: flex; justify-content: space-between; 
+            backdrop-filter: blur(10px); position: relative; z-index: 999; 
+        }
+        body.light #menu { background: rgba(221, 221, 221, 0.9); }
+        .menu-item { 
+            margin-right: 10px; cursor: pointer; transition: color 0.2s; position: relative; 
+            display: flex; align-items: center; gap: 5px; 
+        }
+        .menu-item:hover { color: #4CAF50; }
+        .menu-item img { width: 16px; height: 16px; }
+        .submenu { 
+            position: absolute; top: 100%; left: 0; background: rgba(68, 68, 68, 0.95); 
+            border: 1px solid #555; display: none; flex-direction: column; z-index: 1000; 
+            border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); min-width: 150px; 
+        }
+        body.light .submenu { background: rgba(238, 238, 238, 0.95); border: 1px solid #ccc; }
+        .submenu div { padding: 8px 12px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 5px; }
+        .submenu div:hover { background: #4CAF50; color: white; }
+        .submenu div img { width: 12px; height: 12px; }
+        #toolbar { 
+            background: rgba(68, 68, 68, 0.9); padding: 5px; display: flex; align-items: center; flex-wrap: wrap; 
+            backdrop-filter: blur(10px); z-index: 500; 
+        }
+        body.light #toolbar { background: rgba(221, 221, 221, 0.9); }
+        button { 
+            margin: 0 2px; padding: 6px 12px; background: #555; color: #fff; border: none; cursor: pointer; 
+            border-radius: 4px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+            font-family: 'Press Start 2P', sans-serif; font-size: 8px; 
+        }
+        body.light button { background: #ccc; color: #000; }
+        button:hover { background: #4CAF50; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        button.active { background: #4CAF50; animation: pulse 1s infinite; }
+        button:disabled { background: #333; cursor: not-allowed; transform: none; }
+        button.icon-btn { display: flex; align-items: center; gap: 5px; }
+        button.icon-btn img { width: 16px; height: 16px; }
+        select, input { font-family: 'Press Start 2P', sans-serif; font-size: 8px; }
+        #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 20px; border-radius: 8px; z-index: 100; display: none; animation: fadeIn 0.5s; }
+        #progress { width: 200px; height: 10px; background: #333; border-radius: 5px; overflow: hidden; margin: 10px 0; animation: progressGlow 2s infinite; }
+        #progress-bar { height: 100%; background: linear-gradient(90deg, #4CAF50, #81C784); width: 0%; transition: width 0.3s ease-in-out; }
+        #container { display: flex; height: calc(100vh - 100px); }
+        #layers-panel { width: 240px; background: rgba(51, 51, 51, 0.8); padding: 10px; overflow-y: auto; transition: all 0.3s; }
+        body.light #layers-panel { background: rgba(238, 238, 238, 0.8); }
+        .layer { 
+            background: rgba(68, 68, 68, 0.7); margin-bottom: 5px; padding: 8px; border-radius: 8px; 
+            cursor: move; transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.2); 
+            animation: expandLayer 0.3s ease-out; user-select: none; 
+        }
+        .layer-color-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+    border: 1px solid #555;
+}
+body.light .layer-color-indicator {
+    border: 1px solid #ccc;
+}
+        body.light .layer { background: rgba(255, 255, 255, 0.7); }
+        .layer.current { border: 2px solid #4CAF50; box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); animation: pulse 2s infinite; }
+        .layer:hover { transform: scale(1.02); }
+        .layer-header { display: flex; justify-content: space-between; align-items: center; }
+        .layer input, .layer select { width: 100%; margin: 2px 0; background: #555; color: #fff; border: none; padding: 4px; box-sizing: border-box; border-radius: 4px; }
+        body.light .layer input, .layer select { background: #ccc; color: #000; }
+        .layer-drag-handle { cursor: grab; margin-right: 5px; font-size:12px; }
+        #pianoroll-container { flex: 1; position: relative; }
+        #pianoroll { width: 100%; height: 100%; background: linear-gradient(to bottom, #1a1a1a, #0d0d0d); cursor: crosshair; transition: background 0.3s; animation: fadeIn 0.5s; }
+        body.light #pianoroll { background: linear-gradient(to bottom, #fff, #f5f5f5); }
+        #piano-keys { position: absolute; bottom: 0; left: 0; width: 100%; height: 80px; background: #000; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.5); transition: all 0.3s; }
+        body.light #piano-keys { background: #ccc; }
+        .key { 
+            flex: 1; height: 80px; border-right: 1px solid #333; position: relative; display: flex; 
+            align-items: center; justify-content: center; font-size: 8px; transition: all 0.1s; 
+            background: linear-gradient(to bottom, #fff, #f0f0f0); color: #000; 
+        }
+        body.light .key { border-right: 1px solid #999; background: linear-gradient(to bottom, #eee, #ddd); }
+        .key.white { background: linear-gradient(to bottom, #fff, #f5f5f5); }
+        .key.black { 
+            background: linear-gradient(to bottom, #333, #000); width: 0.6em; margin: 0 -0.3em; z-index: 1; 
+            height: 50px; align-self: flex-end; border-radius: 3px 3px 0 0; 
+        }
+        .key:hover { transform: scale(1.02); box-shadow: 0 2px 5px rgba(0,0,0,0.3); animation: keyHover 0.2s; }
+        .key.octave-label { position: absolute; bottom: -15px; font-size: 6px; opacity: 0; transition: opacity 0.2s; }
+        .key:hover .octave-label { opacity: 1; }
+        .key:active { transform: scale(0.95); animation: ripple 0.6s linear; background: #4CAF50 !important; box-shadow: 0 0 10px #4CAF50; }
+        #song-info, #note-properties { 
+            position: absolute; top: 10px; right: 10px; background: rgba(68, 68, 68, 0.95); padding: 10px; 
+            border-radius: 8px; display: none; z-index: 5; width: 250px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
+            backdrop-filter: blur(10px); animation: fadeIn 0.3s; 
+        }
+        body.light #song-info, body.light #note-properties { background: rgba(238, 238, 238, 0.95); }
+        #status { position: absolute; bottom: 90px; left: 10px; background: rgba(68, 68, 68, 0.9); padding: 5px; border-radius: 4px; transition: all 0.3s; animation: fadeIn 0.5s; }
+        body.light #status { background: rgba(221, 221, 221, 0.9); }
+        input[type="range"] { width: 80px; }
+        #selection-box { position: absolute; border: 1px dashed #FFEB3B; background: rgba(255,235,59,0.1); display: none; animation: pulse 1s infinite; }
+        .loop-marker { position: absolute; background: #FF5722; width: 2px; height: 100%; z-index: 2; box-shadow: 0 0 10px #FF5722; animation: pulse 2s infinite; }
+        #playback-head { position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: linear-gradient(to bottom, #FFEB3B, #FF5722); z-index: 3; display: none; animation: pulse 0.5s infinite, slideHead 0.1s linear; }
+        @media (max-width: 768px) { #layers-panel { width: 180px; } #menu, #toolbar { flex-wrap: wrap; } button { padding: 3px 6px; font-size: 7px; } #loading { padding: 10px; font-size: 8px; } }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <div class="menu-item" onclick="toggleSubmenu('file')">
+            <img src="https://minecraft.wiki/images/Paper_JE2_BE2.png" alt="File" onerror="this.style.display='none'">File ▼
+        </div>
+        <div class="submenu" id="file-submenu">
+            <div onclick="newSong()">
+                <img src="https://minecraft.wiki/images/Book_JE2_BE2.png" alt="New" onerror="this.style.display='none'">New Song
+            </div>
+            <div onclick="openFile()">
+                <img src="https://minecraft.wiki/images/Chest_JE2_BE2.png" alt="Open" onerror="this.style.display='none'">Open .nbs
+            </div>
+            <div onclick="saveFile()">
+                <img src="https://minecraft.wiki/images/Feather_JE3_BE2.png" alt="Save" onerror="this.style.display='none'">Save .nbs
+            </div>
+            <div onclick="saveAsFile()">
+                <img src="https://minecraft.wiki/images/Name_Tag_JE2_BE2.png" alt="Save As" onerror="this.style.display='none'">Save As
+            </div>
+            <div onclick="importMidi()">
+                <img src="https://minecraft.wiki/images/Music_Disc_11_JE2_BE2.png" alt="MIDI" onerror="this.style.display='none'">Import MIDI
+            </div>
+            <div onclick="exportMidi()">
+                <img src="https://minecraft.wiki/images/Emerald_JE3_BE3.png" alt="Export" onerror="this.style.display='none'">Export MIDI
+            </div>
+            <div onclick="exportSchematic()">
+                <img src="https://minecraft.wiki/images/Stone_JE3_BE2.png" alt="Schematic" onerror="this.style.display='none'">Export Schematic
+            </div>
+            <hr>
+            <div onclick="exitApp()">
+                <img src="https://minecraft.wiki/images/Redstone_Dust_JE2_BE2.png" alt="Exit" onerror="this.style.display='none'">Exit
+            </div>
+        </div>
+        <div class="menu-item" onclick="toggleSubmenu('edit')">
+            <img src="https://minecraft.wiki/images/Feather_JE3_BE2.png" alt="Edit" onerror="this.style.display='none'">Edit ▼
+        </div>
+        <div class="submenu" id="edit-submenu">
+            <div onclick="undo()">
+                <img src="https://minecraft.wiki/images/Clock_JE3_BE3.png" alt="Undo" onerror="this.style.display='none'">Undo
+            </div>
+            <div onclick="redo()">
+                <img src="https://minecraft.wiki/images/Clock_JE3_BE3.png" alt="Redo" onerror="this.style.display='none'">Redo
+            </div>
+            <hr>
+            <div onclick="cut()">
+                <img src="https://minecraft.wiki/images/Shears_JE2_BE2.png" alt="Cut" onerror="this.style.display='none'">Cut
+            </div>
+            <div onclick="copy()">
+                <img src="https://minecraft.wiki/images/Book_JE2_BE2.png" alt="Copy" onerror="this.style.display='none'">Copy
+            </div>
+            <div onclick="paste()">
+                <img src="https://minecraft.wiki/images/Slimeball_JE2_BE2.png" alt="Paste" onerror="this.style.display='none'">Paste
+            </div>
+            <div onclick="deleteSelected()">
+                <img src="https://minecraft.wiki/images/Lava_Bucket_JE2_BE2.png" alt="Delete" onerror="this.style.display='none'">Delete
+            </div>
+            <hr>
+            <div onclick="selectAll()">
+                <img src="https://minecraft.wiki/images/Grass_Block_JE7_BE6.png" alt="Select All" onerror="this.style.display='none'">Select All
+            </div>
+            <div onclick="duplicateLayer()">
+                <img src="https://minecraft.wiki/images/Cloning_JE1_BE1.png" alt="Duplicate" onerror="this.style.display='none'">Duplicate Layer
+            </div>
+            <div onclick="quantize()">
+                <img src="https://minecraft.wiki/images/Compass_JE3_BE3.png" alt="Quantize" onerror="this.style.display='none'">Quantize
+            </div>
+            <div onclick="transpose(-12)">
+                <img src="https://minecraft.wiki/images/Redstone_Dust_JE2_BE2.png" alt="-Oct" onerror="this.style.display='none'">Transpose -Oct
+            </div>
+            <div onclick="transpose(12)">
+                <img src="https://minecraft.wiki/images/Emerald_Ore_JE3_BE3.png" alt="+Oct" onerror="this.style.display='none'">+Oct
+            </div>
+        </div>
+        <div class="menu-item" onclick="toggleSubmenu('view')">
+            <img src="https://minecraft.wiki/images/Glass_JE4_BE2.png" alt="View" onerror="this.style.display='none'">View ▼
+        </div>
+        <div class="submenu" id="view-submenu">
+            <div onclick="zoomIn()">
+                <img src="https://minecraft.wiki/images/Eye_of_Ender_JE2_BE2.png" alt="Zoom In" onerror="this.style.display='none'">Zoom In
+            </div>
+            <div onclick="zoomOut()">
+                <img src="https://minecraft.wiki/images/Structure_Void_%28item%29_JE2.png?d2f30&format=original" alt="Zoom Out" onerror="this.style.display='none'">Zoom Out
+            </div>
+            <div onclick="resetView()">
+                <img src="https://minecraft.wiki/images/Anvil_JE3_BE3.png" alt="Reset" onerror="this.style.display='none'">Reset View
+            </div>
+            <hr>
+            <div onclick="toggleGrid()">
+                <img src="https://minecraft.wiki/images/Stone_Bricks_JE3_BE2.png" alt="Grid" onerror="this.style.display='none'">Toggle Grid
+            </div>
+            <div onclick="togglePiano()">
+                <img src="https://minecraft.wiki/images/Note_Block_JE2_BE2.png" alt="Piano" onerror="this.style.display='none'">Toggle Piano
+            </div>
+            <div onclick="toggleOctaveLabels()">
+                <img src="https://minecraft.wiki/images/Oak_Sign_JE2_BE2.png" alt="Labels" onerror="this.style.display='none'">Show Octave Labels
+            </div>
+            <hr>
+            <div onclick="toggleTheme()">
+                <img src="https://minecraft.wiki/images/Ender_Eye_JE2_BE2.png" alt="Theme" onerror="this.style.display='none'">Toggle Dark/Light
+            </div>
+            <div onclick="toggleSnap()">
+                <img src="https://minecraft.wiki/images/Chain_JE1_BE1.png" alt="Snap" onerror="this.style.display='none'">Toggle Snap
+            </div>
+        </div>
+        <div class="menu-item" onclick="toggleSubmenu('song')">
+            <img src="https://minecraft.wiki/images/Jukebox_JE2_BE2.png" alt="Song" onerror="this.style.display='none'">Song ▼
+        </div>
+        <div class="submenu" id="song-submenu">
+            <div onclick="showSongInfo()">
+                <img src="https://minecraft.wiki/images/Written_Book_JE2_BE2.png" alt="Info" onerror="this.style.display='none'">Song Info
+            </div>
+            <div onclick="changeTempo()">
+                <img src="https://minecraft.wiki/images/Clock_JE3_BE3.png" alt="Tempo" onerror="this.style.display='none'">Change Tempo
+            </div>
+            <div onclick="setTimeSignature()">
+                <img src="https://minecraft.wiki/images/Daylight_Detector_JE2_BE2.png" alt="Time Sig" onerror="this.style.display='none'">Set Time Signature
+            </div>
+            <div onclick="toggleLoop()">
+                <img src="https://minecraft.wiki/images/Repeater_JE3_BE2.png" alt="Loop" onerror="this.style.display='none'">Toggle Loop
+            </div>
+            <div onclick="setLoopMarkers()">
+                <img src="https://minecraft.wiki/images/Map_JE2_BE2.png" alt="Markers" onerror="this.style.display='none'">Set Loop Markers
+            </div>
+        </div>
+        <div class="menu-item" onclick="toggleSubmenu('layer')">
+            <img src="https://minecraft.wiki/images/Red_Sandstone_JE3_BE2.png" alt="Layer" onerror="this.style.display='none'">Layer ▼
+        </div>
+        <div class="submenu" id="layer-submenu">
+            <div onclick="addLayer()">
+                <img src="https://minecraft.wiki/images/Egg_JE2_BE2.png" alt="Add" onerror="this.style.display='none'">Add Layer
+            </div>
+            <div onclick="deleteLayer()">
+                <img src="https://minecraft.wiki/images/TNT_JE3_BE2.png" alt="Delete" onerror="this.style.display='none'">Delete Layer
+            </div>
+            <div onclick="mergeLayers()">
+                <img src="https://minecraft.wiki/images/Iron_Block_JE3_BE3.png" alt="Merge" onerror="this.style.display='none'">Merge Layers
+            </div>
+            <hr>
+            <div onclick="layerProperties()">
+                <img src="https://minecraft.wiki/images/Enchanted_Book_JE2_BE2.png" alt="Props" onerror="this.style.display='none'">Layer Properties
+            </div>
+            <div onclick="toggleAutomation()">
+                <img src="https://minecraft.wiki/images/Dispenser_JE3_BE2.png" alt="Auto" onerror="this.style.display='none'">Toggle Automation
+            </div>
+        </div>
+        <div class="menu-item" onclick="toggleSubmenu('help')">
+            <img src="https://minecraft.wiki/images/Book_JE2_BE2.png" alt="Help" onerror="this.style.display='none'">Help ▼
+        </div>
+        <div class="submenu" id="help-submenu">
+            <div onclick="showAbout()">
+                <img src="https://minecraft.wiki/images/Writable_Book_JE2_BE2.png" alt="About" onerror="this.style.display='none'">About
+            </div>
+        </div>
+    </div>
+    <div id="toolbar">
+        <button id="play" class="icon-btn" onclick="togglePlay()" disabled>
+            <img src="https://minecraft.wiki/images/Note_Block_JE2_BE2.png" alt="Play" onerror="this.innerHTML='⏸ ' + this.innerHTML.substring(2)">Loading...
+        </button>
+        <button class="icon-btn" onclick="stop()" disabled>
+            <img src="https://minecraft.wiki/images/Barrier_%28held%29_JE2_BE2.png?c4806&format=original" alt="Stop" onerror="this.innerHTML='⏹ ' + this.innerHTML.substring(5)">Stop
+        </button>
+        <button id="loop" class="icon-btn" onclick="toggleLoop()" disabled>
+            <img src="https://minecraft.wiki/images/Clock_JE3_BE3.gif?8eaae&format=original" alt="Loop" onerror="this.innerHTML='🔄 Loop Off'">Loop Off
+        </button>
+        <button class="icon-btn" onclick="record()" disabled>
+            <img src="https://minecraft.wiki/images/Redstone_Lamp_JE3_BE2.png" alt="Record" onerror="this.innerHTML='🎤 Record'">Record
+        </button>
+        <button class="icon-btn" onclick="downloadSounds()">
+            <img src="https://minecraft.wiki/images/Ender_Pearl_JE3_BE2.png" alt="Download" onerror="this.innerHTML='📥 Download Sounds'">Download Sounds
+        </button>
+        <label>Tempo: <input type="number" id="tempo" value="120" min="1" max="500" onchange="changeTempo(this.value)" disabled></label>
+        <label>Speed: <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1" onchange="changeSpeed(this.value)" disabled></label>
+        <label>Tool: 
+            <select id="tool" onchange="changeTool(this.value)" disabled>
+                <option value="pencil"><img src="https://minecraft.wiki/images/Debug_Stick.gif?c7249&format=original" alt="Pencil" onerror="this.innerHTML='✏ ' + this.innerHTML.substring(2)"> Pencil</option>
+                <option value="erase"><img src="https://minecraft.wiki/images/Feather_JE3_BE2.png?b869b&format=original" alt="Erase" onerror="this.innerHTML='🗑 ' + this.innerHTML.substring(2)"> Erase</option>
+                <option value="select"><img src="https://minecraft.wiki/images/Paper_JE2_BE2.png?9c3be&format=original" alt="Select" onerror="this.innerHTML='🔘 ' + this.innerHTML.substring(2)"> Select</option>
+            </select>
+        </label>
+        <label>Snap: <input type="number" id="snap" value="1" min="1" max="16" onchange="changeSnap(this.value)" disabled></label>
+        <button class="icon-btn" onclick="zoomIn()" disabled>
+            <img src="https://minecraft.wiki/images/Snowball_JE3_BE3.png?8c074&format=original" alt="Zoom +" onerror="this.innerHTML='🔍+ ' + this.innerHTML.substring(3)">+
+        </button>
+        <button class="icon-btn" onclick="zoomOut()" disabled>
+            <img src="https://minecraft.wiki/images/Wind_Charge_%28item%29_JE1_BE1.png?ed7c0&format=original" alt="Zoom -" onerror="this.innerHTML='🔍- ' + this.innerHTML.substring(3)">-
+        </button>
+        <label>Tick: <span id="current-tick">0</span> / <span id="song-length">0</span></label>
+        <label>Master Vol: <input type="range" id="master-vol" min="0" max="200" value="150" onchange="setMasterVol(this.value)"></label>
+        <button class="icon-btn" onclick="testSound()">
+            <img src="https://minecraft.wiki/images/Totem_of_Undying_JE2_BE2.png?d56eb&format=original" alt="Bell"> Test Sound
+        </button>
+        <button id="start-audio" onclick="startAudio()">Aktifkan Audio</button>
+    </div>
+    <div id="loading">
+        <h4>Loading Instruments...</h4>
+        <div id="progress"><div id="progress-bar"></div></div>
+        <p id="load-status">Silakan klik "Aktifkan Audio" untuk memulai...</p>
+    </div>
+    <div id="container">
+        <div id="layers-panel">
+            <h3>Layers</h3>
+            <div id="layers-list"></div>
+        </div>
+        <div id="pianoroll-container">
+            <canvas id="pianoroll"></canvas>
+            <div id="selection-box"></div>
+            <div id="loop-start" class="loop-marker" style="display:none;"></div>
+            <div id="loop-end" class="loop-marker" style="display:none;"></div>
+            <div id="playback-head"></div>
+            <div id="piano-keys"></div>
+            <div id="song-info">
+                <h4>Song Info</h4>
+                <label>Title: <input type="text" id="song-title" placeholder="Song Name"></label>
+                <label>Author: <input type="text" id="song-author" placeholder="Author"></label>
+                <label>Description: <textarea id="song-desc" placeholder="Description"></textarea></label>
+                <button onclick="saveSongInfo()">Save</button>
+                <button onclick="closeDialog('song-info')">Close</button>
+            </div>
+            <div id="note-properties">
+                <h4>Note Properties</h4>
+                <label>Velocity: <input type="range" id="note-vel" min="0" max="100" value="100"><span id="vel-val">100</span>%</label>
+                <label>Pan: <input type="range" id="note-pan" min="0" max="200" value="100"><span id="pan-val">100</span></label>
+                <label>Fade Out: <input type="range" id="note-fade" min="0" max="100" value="0"><span id="fade-val">0</span> ticks</label>
+                <label>Duration: <input type="range" id="note-dur" min="1" max="16" value="1"><span id="dur-val">1</span> ticks</label>
+                <button onclick="applyNoteProps()">Apply</button>
+                <button onclick="closeDialog('note-properties')">Close</button>
+            </div>
+            <div id="status">Snap: 1/1 | Tool: ✏ Pencil | Loading sounds...</div>
+        </div>
+    </div>
+</body>
+</html>
+
+    <script>
+        let song = {
+            version: 5,
+            vanillaInstrumentCount: 16,
+            length: 0,
+            layers: 16,
+            title: 'Untitled',
+            author: '',
+            originalAuthor: '',
+            description: '',
+            tempo: 12000,
+            autosave: 0,
+            autosaveDuration: 0,
+            timeSignature: 4,
+            minutesSpent: 0,
+            leftClicks: 0,
+            rightClicks: 0,
+            blocksAdded: 0,
+            blocksRemoved: 0,
+            midiFilename: '',
+            loop: { enabled: false, maxCount: 0, startTick: 0, endTick: 0 },
+            masterVolume: 150,
+            layersData: Array(16).fill().map((_, i) => ({
+                name: `Layer ${i + 1}`,
+                volume: 100,
+                pan: 100,
+                locked: false,
+                mute: false,
+                solo: false,
+                instrument: 0,
+                customSound: null,
+                pressKey: 36 + i * 2,
+                automation: { enabled: false, points: [] },
+                notes: []
+            }))
+        };
+        let history = [];
+        let historyIndex = -1;
+        let currentLayer = 0;
+        let selectedNotes = [];
+        let isPlaying = false;
+        let playbackId = null;
+        let audioContext = null;
+        let masterGain = null;
+        let instrumentBuffers = [];
+        let zoom = 1;
+        let offsetX = 0, offsetY = 0;
+        let gridSnap = 1;
+        let showGrid = true;
+        let showPiano = true;
+        let isDark = true;
+        let tool = 'pencil';
+        let loopEnabled = false;
+        let speed = 1;
+        let isDragging = false;
+        let isSelecting = false;
+        let selectStart = {x: 0, y: 0};
+        let clipboard = [];
+        let soundsLoaded = false;
+        let showOctaveLabels = false;
+
+        const instruments = ['Harp', 'Bass', 'Basedrum', 'Snare', 'Snare', 'Click', 'Guitar', 'Flute', 'Bell', 'Chime', 'Pling', 'Xylo', 'Cow_Bell', 'Didgeridoo', 'Bit', 'Banjo'];
+        const pitches = Array.from({length: 25}, (_, i) => i);
+        const keyNames = ['F#0', 'G0', 'G#0', 'A0', 'A#0', 'B0', 'C1', 'C#1', 'D1', 'D#1', 'E1', 'F1', 'F#1', 'G1', 'G#1', 'A1', 'A#1', 'B1', 'C2', 'C#2', 'D2', 'D#2', 'E2', 'F2', 'F#2'];
+
+        // Instrument image URLs (updated with reliable Minecraft Wiki URLs)
+const instrumentImages = {
+    0: 'https://minecraft.wiki/images/Note_Block_JE2_BE2.png?format=original', // Harp - Note Block (ikon utama untuk musik)
+    1: 'https://minecraft.wiki/images/Oak_Planks_JE6_BE3.png?format=original', // Bass - Oak Planks (kayu bass)
+    2: 'https://minecraft.wiki/images/Stone_JE3_BE2.png?format=original', // Basedrum - Stone (drum batu dasar)
+    3: 'https://minecraft.wiki/images/Sand_JE5_BE3.png?format=original', // Snare - Sand (snare berpasir/hat)
+    4: 'https://minecraft.wiki/images/Sand_JE5_BE3.png?format=original', // Snare - Sand (sama seperti Hat)
+    5: 'https://minecraft.wiki/images/Glass_JE4_BE2.png?format=original', // Click - Glass (klik bening)
+    6: 'https://minecraft.wiki/images/String_JE2_BE2.png?format=original', // Guitar - String (senar gitar)
+    7: 'https://minecraft.wiki/images/Feather_JE3_BE2.png?format=original', // Flute - Feather (flute ringan/udara)
+    8: 'https://minecraft.wiki/images/Gold_Ingot_JE4_BE3.png?format=original', // Bell - Gold Ingot (bel logam emas)
+    9: 'https://minecraft.wiki/images/Quartz_JE3.png?format=original', // Chime - Quartz (chime kristal)
+    10: 'https://minecraft.wiki/images/Glowstone_Dust_JE2_BE2.png?format=original', // Pling - Glowstone Dust (pling bercahaya)
+    11: 'https://minecraft.wiki/images/Bone_JE2_BE2.png?format=original', // Xylo - Bone (xylophone kayu/tulang)
+    12: 'https://minecraft.wiki/images/Bell_JE2_BE2.png?format=original', // Cow_Bell - Bell (cow bell langsung)
+    13: 'https://minecraft.wiki/images/Bamboo_JE2_BE2.png?format=original', // Didgeridoo - Bamboo (didgeridoo bambu)
+    14: 'https://minecraft.wiki/images/Redstone_Dust_JE2_BE2.png?format=original', // Bit - Redstone Dust (bit digital/merah)
+    15: 'https://minecraft.wiki/images/Spider_Eye_JE3_BE2.png?format=original', // Banjo - Spider Eye (banjo "stringy" aneh, alternatif: String di atas)
+    16: 'https://minecraft.wiki/images/Writable_Book_JE2_BE2.png?format=original' // Custom - Writable Book (custom editable)
+};
+
+// Instrument colors (updated to match item themes better)
+const instrumentColors = {
+    0: '#4CAF50', // Harp - Green (musik alami)
+    1: '#8BC34A', // Bass - Light Green (kayu hijau)
+    2: '#795548', // Basedrum - Brown (batu tanah)
+    3: '#FFEB3B', // Snare - Yellow (pasir cerah)
+    4: '#FFEB3B', // Snare - Yellow
+    5: '#E0E0E0', // Click - Light Gray (kaca bening)
+    6: '#CD7F32', // Guitar - Gold Brown (senar kayu)
+    7: '#FFF9C4', // Flute - Cream (bulu ringan)
+    8: '#FFCA28', // Bell - Yellow (emas kuning)
+    9: '#FAFAFA', // Chime - White (kuartz bening)
+    10: '#FFFF00', // Pling - Bright Yellow (cahaya kuning)
+    11: '#FFE0B2', // Xylo - Light Orange (tulang hangat)
+    12: '#FFC107', // Cow_Bell - Amber (bel kuning)
+    13: '#AED581', // Didgeridoo - Light Green (bambu hijau)
+    14: '#F44336', // Bit - Red (redstone merah)
+    15: '#795548', // Banjo - Brown (senar kayu)
+    16: '#9E9E9E'  // Custom - Gray (netral)
+};
+
+// Layer colors (16 distinct colors for up to 16 layers)
+const layerColors = [
+    '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#33FFF6', '#FF8C33', '#8C33FF', '#FF3333',
+    '#33FF8C', '#5733FF', '#FF33F6', '#33A1FF', '#FFA133', '#A133FF', '#FF5733', '#33FF33'
+];
+
+        const soundUrls = {
+            0: 'https://files.catbox.moe/olm2z1.mp3',           // Harp
+            1: 'https://files.catbox.moe/goyt5q.mp3',          // Bass
+            2: 'https://files.catbox.moe/wwtu0o.mp3',          // Basedrum
+            3: 'https://files.catbox.moe/od05s4.mp3',          // Snare (used for Hat)
+            4: 'https://files.catbox.moe/od05s4.mp3',          // Snare
+            5: 'https://files.catbox.moe/d4nhg1.mp3',          // Click
+            6: 'https://files.catbox.moe/81usy9.mp3',         // Guitar
+            7: 'https://files.catbox.moe/l24srx.mp3',          // Flute
+            8: 'https://files.catbox.moe/yddw9v.mp3',           // Bell
+            9: 'https://files.catbox.moe/jd10fh.mp3',       // Chime
+            10: 'https://files.catbox.moe/uoi110.mp3',         // Pling
+            11: 'https://files.catbox.moe/rlok94.mp3', // Xylophone
+            12: 'https://files.catbox.moe/wtb49c.mp3',      // Cow Bell
+            13: 'https://files.catbox.moe/dwuzpo.mp3',    // Didgeridoo
+            14: 'https://files.catbox.moe/6bg8l6.mp3',           // Bit
+            15: 'https://files.catbox.moe/ep7a6o.mp3'          // Banjo
+        };
+
+        const canvas = document.getElementById('pianoroll');
+        const ctx = canvas.getContext('2d');
+        const selectionBox = document.getElementById('selection-box');
+        const playbackHead = document.getElementById('playback-head');
+
+        function init() {
+            showLoading(true);
+            document.getElementById('load-status').textContent = 'Silakan klik "Aktifkan Audio" untuk memulai...';
+            drawPianoKeys();
+            updateLayersPanel();
+            drawPianoRoll();
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        function updateProgress(current, total) {
+            const percent = (current / total) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('load-status').textContent = `Loading instrument ${current}/${total}...`;
+        }
+
+        async function preloadSounds() {
+            instrumentBuffers = new Array(instruments.length);
+            let loadedCount = 0;
+            let failedCount = 0;
+
+            for (let i = 0; i < instruments.length; i++) {
+                try {
+                    updateProgress(i + 1, instruments.length);
+                    const response = await fetch(soundUrls[i], { 
+                        mode: 'cors',
+                        credentials: 'omit',
+                        headers: { 'Content-Type': 'audio/mpeg' }
+                    });
+                    if (!response.ok) throw new Error(`HTTP ${response.status} for ${soundUrls[i]}`);
+                    const arrayBuffer = await response.arrayBuffer();
+                    instrumentBuffers[i] = await audioContext.decodeAudioData(arrayBuffer).catch(err => {
+                        console.error(`Decode failed for ${soundUrls[i]}:`, err);
+                        return null;
+                    });
+                    if (instrumentBuffers[i]) {
+                        console.log(`Loaded ${soundUrls[i]} successfully`);
+                        loadedCount++;
+                    } else {
+                        throw new Error('Decoding failed');
+                    }
+                } catch (err) {
+                    console.error(`Failed to load sound for ${instruments[i]}:`, err);
+                    instrumentBuffers[i] = null;
+                    failedCount++;
+                    if (failedCount < instruments.length) {
+                        console.log(`Retrying ${soundUrls[i]}...`);
+                        const retryResponse = await fetch(soundUrls[i], { mode: 'cors', credentials: 'omit' });
+                        if (retryResponse.ok) {
+                            const retryBuffer = await retryResponse.arrayBuffer();
+                            instrumentBuffers[i] = await audioContext.decodeAudioData(retryBuffer);
+                            if (instrumentBuffers[i]) {
+                                console.log(`Retry success for ${soundUrls[i]}`);
+                                loadedCount++;
+                                failedCount--;
+                            }
+                        }
+                    }
+                }
+            }
+
+            soundsLoaded = true;
+            if (failedCount > 0) {
+                console.warn(`${failedCount} instruments failed to load, using fallback oscillators.`);
+            }
+            if (loadedCount === 0) {
+                alert('No sounds could be loaded. Please check the internet connection or URLs.');
+            } else {
+                console.log(`Loaded ${loadedCount} out of ${instruments.length} sounds.`);
+            }
+        }
+
+        function downloadSounds() {
+            alert('Sounds are included via Catbox URLs. Ensure internet connection!');
+        }
+
+        function startAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('AudioContext created after user gesture, state:', audioContext.state);
+                const compressor = audioContext.createDynamicsCompressor();
+                compressor.threshold.value = -24;
+                compressor.knee.value = 30;
+                compressor.ratio.value = 12;
+                compressor.attack.value = 0.003;
+                compressor.release.value = 0.25;
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = song.masterVolume / 100 * 1.5;
+                masterGain.connect(compressor);
+                compressor.connect(audioContext.destination);
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed, state:', audioContext.state);
+                    preloadSounds().then(() => {
+                        enableUI();
+                        document.getElementById('play').disabled = false;
+                        document.getElementById('start-audio').style.display = 'none';
+                        drawPianoKeys();
+                        updateLayersPanel();
+                        drawPianoRoll();
+                        playNote(0, 12); // Test sound with Harp
+                        showLoading(false);
+                    });
+                });
+            } else {
+                preloadSounds().then(() => {
+                    enableUI();
+                    document.getElementById('play').disabled = false;
+                    document.getElementById('start-audio').style.display = 'none';
+                    drawPianoKeys();
+                    updateLayersPanel();
+                    drawPianoRoll();
+                    playNote(0, 12); // Test sound with Harp
+                    showLoading(false);
+                });
+            }
+        }
+
+        async function loadCustomSound(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            return audioBuffer;
+        }
+
+        function playNote(instrument, pitch, velocity = 100, pan = 100, fade = 0, duration = 1, delay = 0, customBuffer = null) {
+            if (!soundsLoaded || !audioContext) {
+                console.error('Cannot play note: Audio not ready or context missing');
+                return;
+            }
+            if (audioContext.state === 'suspended') {
+                console.warn('AudioContext suspended, resuming...');
+                audioContext.resume().then(() => console.log('AudioContext resumed, state:', audioContext.state));
+            }
+
+            console.log(`Attempting to play: Instrument ${instruments[instrument] || 'Unknown #' + instrument}, Pitch ${pitch}, Delay ${delay}ms, Velocity ${velocity}, Context State: ${audioContext.state}`);
+
+            setTimeout(() => {
+                const now = audioContext.currentTime;
+                let source, gain, panner;
+                let buffer = customBuffer || (instrument >= 0 && instrument < instrumentBuffers.length ? instrumentBuffers[instrument] : null);
+
+                if (!buffer) {
+                    console.warn(`No buffer for instrument ${instrument} (${instruments[instrument] || 'Unknown'}), using oscillator`);
+                    source = audioContext.createOscillator();
+                    gain = audioContext.createGain();
+                    panner = audioContext.createStereoPanner();
+                    source.connect(gain).connect(panner).connect(masterGain);
+                    let freq = 440 * Math.pow(2, (pitch + 12 - 45) / 12);
+                    source.frequency.value = freq;
+                    source.type = 'sine'; // Fallback ke sine
+                } else {
+                    source = audioContext.createBufferSource();
+                    source.buffer = buffer;
+                    gain = audioContext.createGain();
+                    panner = audioContext.createStereoPanner();
+                    source.connect(gain).connect(panner).connect(masterGain);
+                    source.playbackRate.value = Math.pow(2, (pitch - 12) / 12);
+                    console.log(`Playing ${instruments[instrument] || 'Custom'} at ${pitch}, time: ${now}`);
+                }
+
+                gain.gain.setValueAtTime((velocity / 100) * 0.8, now);
+                const tickDur = (60000 / (song.tempo / 100)) / 1000;
+                const totalDur = (duration * tickDur) + (fade / 100 * 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + totalDur);
+                panner.pan.value = (pan / 100 - 1) * 1;
+                source.start(now);
+                source.stop(now + totalDur);
+                console.log(`Note played at ${now}, duration ${totalDur}s`);
+            }, delay);
+        }
+
+        function enableUI() {
+            const elements = document.querySelectorAll('#toolbar input, #toolbar select, #toolbar button:not(#play):not(#start-audio)');
+            elements.forEach(el => el.disabled = false);
+            document.getElementById('status').textContent = `Snap: 1/${gridSnap} | Tool: ${tool} | Sounds loaded!`;
+        }
+
+        function setMasterVol(val) {
+            song.masterVolume = parseInt(val);
+            if (masterGain) masterGain.gain.value = song.masterVolume / 100 * 1.5;
+        }
+
+        function togglePlay() { if (isPlaying) stop(); else play(); }
+
+        function play() {
+            if (!soundsLoaded) { alert('Sounds still loading!'); return; }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed for playback, state:', audioContext.state);
+                    startPlayback();
+                });
+            } else {
+                startPlayback();
+            }
+        }
+
+        function startPlayback() {
+            if (!soundsLoaded) {
+                alert('Sounds still loading!');
+                return;
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    console.log('AudioContext resumed for playback, state:', audioContext.state);
+                    beginPlayback();
+                });
+            } else {
+                beginPlayback();
+            }
+        }
+
+        function beginPlayback() {
+            isPlaying = true;
+            document.getElementById('play').textContent = 'â¸ Pause';
+            document.getElementById('play').classList.add('active');
+            playbackHead.style.display = 'block';
+
+            const startTime = audioContext.currentTime;
+            let tick = 0;
+
+            // Hitung panjang lagu (berapa tick total)
+            song.length = Math.max(
+                ...song.layersData.map(l =>
+                    l.notes.length ? Math.max(...l.notes.map(n => n.tick + n.duration)) + 1 : 0
+                ),
+                1
+            );
+            document.getElementById('song-length').textContent = song.length;
+
+            console.log(
+                'Playback started at:', startTime,
+                'song length:', song.length,
+                'tempo:', song.tempo,
+                'speed:', speed
+            );
+
+            function scheduleNextTick() {
+                // Hitung tickDuration berdasarkan BPM asli (bagi 100 dari tempo NBS)
+                const tickDuration = (60000 / (song.tempo / 100)) / speed / 1000; // Dalam detik
+                const currentTime = audioContext.currentTime;
+                const scheduledTime = startTime + (tick * tickDuration);
+
+                if (currentTime >= scheduledTime || tick === 0) {
+                    console.log('Current tick:', tick, 'Tick duration:', tickDuration * 1000, 'ms');
+
+                    // Mainkan note sesuai tick
+                    song.layersData.slice(0, song.layers).forEach((layer, i) => {
+                        if (layer.mute) return;
+                        if (layer.solo && song.layersData.some(s => s.solo && !s.mute) && !layer.solo) return;
+
+                        const notesToPlay = layer.notes.filter(n => n.tick === tick);
+                        notesToPlay.forEach(n => {
+                            const delay = Math.max(0, (scheduledTime - currentTime) * 1000);
+                            console.log(
+                                `Scheduling note at tick ${tick}: ${instruments[layer.instrument] || 'Custom'}, Pitch ${n.pitch}, Delay ${delay}ms`
+                            );
+                            playNote(
+                                layer.instrument,
+                                n.pitch,
+                                n.velocity * (layer.volume / 100),
+                                n.pan,
+                                n.fade,
+                                n.duration,
+                                delay,
+                                layer.customSound
+                            );
+                        });
+                    });
+
+                    document.getElementById('current-tick').textContent = tick;
+                    const tickWidth = 40 * zoom;
+                    const headX = (tick * tickWidth) - offsetX;
+                    playbackHead.style.left = headX + 'px';
+                    drawPianoRoll();
+
+                    // Loop
+                    if (loopEnabled && tick >= song.loop.endTick) tick = song.loop.startTick;
+                    if (!loopEnabled && tick >= song.length) {
+                        stop();
+                        return;
+                    }
+                    tick++;
+                }
+
+                if (isPlaying) {
+                    const nextTickTime = startTime + (tick * tickDuration);
+                    const timeout = Math.max(0, (nextTickTime - audioContext.currentTime) * 1000);
+                    console.log('Next timeout:', timeout, 'ms');
+                    setTimeout(scheduleNextTick, timeout);
+                }
+            }
+
+            scheduleNextTick();
+        }
+
+        function stop() {
+            isPlaying = false;
+            document.getElementById('play').textContent = 'â–¶ Play';
+            document.getElementById('play').classList.remove('active');
+            playbackHead.style.display = 'none';
+            document.getElementById('current-tick').textContent = 0;
+            drawPianoRoll();
+        }
+
+        function toggleLoop() {
+            loopEnabled = !loopEnabled;
+            song.loop.enabled = loopEnabled;
+            document.getElementById('loop').textContent = loopEnabled ? 'ðŸ”„ Loop On' : 'ðŸ”„ Loop Off';
+            setLoopMarkers();
+        }
+
+        function setLoopMarkers() {
+            if (loopEnabled) {
+                song.loop.startTick = parseInt(prompt('Loop start tick:', song.loop.startTick) || 0);
+                song.loop.endTick = parseInt(prompt('Loop end tick:', song.length) || song.length);
+                drawPianoRoll();
+            }
+        }
+
+        function changeSpeed(val) { speed = parseFloat(val); }
+        function changeTempo(val) {
+            song.tempo = parseInt(val) * 100; // Fix: NBS tempo is in centi-BPM
+            document.getElementById('tempo').value = song.tempo / 100;
+            console.log('Tempo changed to:', song.tempo / 100);
+        }
+
+        function toggleSubmenu(id) {
+            const submenu = document.getElementById(id + '-submenu');
+            submenu.style.display = submenu.style.display === 'flex' ? 'none' : 'flex';
+            document.querySelectorAll('.submenu').forEach(s => { if (s.id !== id + '-submenu') s.style.display = 'none'; });
+        }
+
+        // Close submenu on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#menu')) {
+                document.querySelectorAll('.submenu').forEach(s => s.style.display = 'none');
+            }
+        });
+
+        function newSong() {
+            if (confirm('Start new song? Unsaved changes will be lost.')) {
+                song = {
+                    version: 5,
+                    vanillaInstrumentCount: 16,
+                    length: 0,
+                    layers: 16,
+                    title: 'Untitled',
+                    author: '',
+                    originalAuthor: '',
+                    description: '',
+                    tempo: 12000,
+                    autosave: 0,
+                    autosaveDuration: 0,
+                    timeSignature: 4,
+                    minutesSpent: 0,
+                    leftClicks: 0,
+                    rightClicks: 0,
+                    blocksAdded: 0,
+                    blocksRemoved: 0,
+                    midiFilename: '',
+                    loop: { enabled: false, maxCount: 0, startTick: 0, endTick: 0 },
+                    masterVolume: 150,
+                    layersData: Array(16).fill().map((_, i) => ({
+                        name: `Layer ${i + 1}`,
+                        volume: 100,
+                        pan: 100,
+                        locked: false,
+                        mute: false,
+                        solo: false,
+                        instrument: 0,
+                        customSound: null,
+                        pressKey: 36 + i * 2,
+                        automation: { enabled: false, points: [] },
+                        notes: []
+                    }))
+                };
+                currentLayer = 0;
+                updateLayersPanel();
+                drawPianoRoll();
+                saveHistory();
+            }
+        }
+
+        function setTimeSignature() {
+            const ts = prompt('Time signature (e.g., 4):', song.timeSignature);
+            if (ts) song.timeSignature = parseInt(ts);
+        }
+
+        function duplicateLayer() {
+            if (song.layers < 16) {
+                const src = song.layersData[currentLayer];
+                const newIdx = song.layers++;
+                song.layersData[newIdx] = JSON.parse(JSON.stringify(src));
+                song.layersData[newIdx].name += ' Copy';
+                currentLayer = newIdx;
+                updateLayersPanel();
+                drawPianoRoll();
+                saveHistory();
+            } else {
+                alert('Maximum 16 layers!');
+            }
+        }
+
+        function mergeLayers() {
+            if (song.layers > 1) {
+                const target = currentLayer;
+                const nextLayer = (currentLayer + 1) % song.layers;
+                song.layersData[target].notes = song.layersData[target].notes.concat(song.layersData[nextLayer].notes);
+                song.layersData[target].notes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch);
+                song.layersData.splice(nextLayer, 1);
+                song.layers--;
+                if (currentLayer >= song.layers) currentLayer = song.layers - 1;
+                updateLayersPanel();
+                drawPianoRoll();
+                saveHistory();
+            } else {
+                alert('Need at least 2 layers to merge!');
+            }
+        }
+
+        function toggleOctaveLabels() {
+            showOctaveLabels = !showOctaveLabels;
+            drawPianoKeys();
+        }
+
+        function updateLayersPanel() {
+    const list = document.getElementById('layers-list');
+    list.innerHTML = '';
+    song.layersData.slice(0, song.layers).forEach((layer, i) => {
+        const div = document.createElement('div');
+        div.className = `layer ${i === currentLayer ? 'current' : ''}`;
+        div.draggable = true;
+        const instName = layer.instrument >= instruments.length ? 'Custom' : instruments[layer.instrument];
+        div.innerHTML = `
+            <div class="layer-header">
+                <span class="layer-drag-handle" draggable="true">⋮⋮</span>
+                <span class="layer-color-indicator" style="background-color: ${layerColors[i]};"></span>
+                <strong>${layer.name} (${instName})</strong>
+                <span>${layer.locked ? '🔒' : ''} 
+                    <input type="checkbox" ${layer.mute ? 'checked' : ''} onchange="toggleMute(${i}, this.checked)"> M
+                    <input type="checkbox" ${layer.solo ? 'checked' : ''} onchange="toggleSolo(${i}, this.checked)"> S
+                    <input type="checkbox" ${layer.automation.enabled ? 'checked' : ''} onchange="toggleAutomation(${i}, this.checked)"> A
+                    <button onclick="duplicateLayerFor(${i})" style="font-size:8px;">Dup</button>
+                </span>
+            </div>
+            <input type="text" value="${layer.name}" onchange="changeLayerName(${i}, this.value)" placeholder="Layer Name">
+            <select onchange="changeInstrument(${i}, this.value)">
+                ${instruments.map((inst, j) => `<option value="${j}" ${layer.instrument === j ? 'selected' : ''}>${inst}</option>`).join('')}
+                <option value="16" ${layer.instrument === 16 ? 'selected' : ''}>Custom (Upload)</option>
+            </select>
+            <button onclick="uploadCustom(${i})" style="font-size:10px;">Upload Sound</button>
+            <label>Vol: <input type="range" min="0" max="100" value="${layer.volume}" onchange="changeVolume(${i}, this.value)"></label>
+            <label>Pan: <input type="range" min="0" max="200" value="${layer.pan}" onchange="changePan(${i}, this.value)"></label>
+            <label>Key: <input type="number" value="${layer.pressKey}" min="0" max="127" onchange="changePressKey(${i}, this.value)"></label>
+            <div id="auto-${i}" style="display:none;">
+                <label>Automation Points: <button onclick="addAutoPoint(${i})">Add</button></label>
+                <div id="points-${i}"></div>
+            </div>
+        `;
+        div.onclick = (e) => { 
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON') { 
+                currentLayer = i; 
+                updateLayersPanel(); 
+                drawPianoRoll(); 
+            } 
+        };
+        list.appendChild(div);
+        if (layer.automation.enabled) {
+            document.getElementById(`auto-${i}`).style.display = 'block';
+            updateAutoPoints(i);
+        }
+    });
+}
+
+        function duplicateLayerFor(i) {
+            if (song.layers < 16) {
+                const src = song.layersData[i];
+                const newIdx = song.layers++;
+                song.layersData[newIdx] = JSON.parse(JSON.stringify(src));
+                song.layersData[newIdx].name += ' Copy';
+                currentLayer = newIdx;
+                updateLayersPanel();
+                drawPianoRoll();
+                saveHistory();
+            } else {
+                alert('Maximum 16 layers!');
+            }
+        }
+
+        async function uploadCustom(layerIdx) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*';
+            input.onchange = async (e) => {
+                try {
+                    const buffer = await loadCustomSound(e.target.files[0]);
+                    song.layersData[layerIdx].customSound = buffer;
+                    song.layersData[layerIdx].instrument = 16;
+                    updateLayersPanel();
+                    alert('Custom sound loaded!');
+                } catch (err) {
+                    alert('Error loading sound: ' + err.message);
+                }
+            };
+            input.click();
+        }
+
+        function toggleAutomation(idx, enabled) {
+            song.layersData[idx].automation.enabled = enabled;
+            const autoDiv = document.getElementById(`auto-${idx}`);
+            autoDiv.style.display = enabled ? 'block' : 'none';
+            if (enabled) updateAutoPoints(idx);
+            updateLayersPanel();
+        }
+
+        function addAutoPoint(idx) {
+            const tick = prompt('Tick for point:');
+            const vol = prompt('Volume (0-100):');
+            if (tick && vol) {
+                song.layersData[idx].automation.points.push({tick: parseInt(tick), vol: parseInt(vol)});
+                updateAutoPoints(idx);
+                saveHistory();
+            }
+        }
+
+        function updateAutoPoints(idx) {
+            const pointsDiv = document.getElementById(`points-${idx}`);
+            pointsDiv.innerHTML = song.layersData[idx].automation.points.map((p, j) => 
+                `<div>${p.tick}: ${p.vol}% <button onclick="removeAutoPoint(${idx}, ${j})">Del</button></div>`
+            ).join('');
+        }
+
+        function removeAutoPoint(idx, j) {
+            song.layersData[idx].automation.points.splice(j, 1);
+            updateAutoPoints(idx);
+            saveHistory();
+        }
+
+        function addLayer() {
+            if (song.layers < 16) {
+                const newIdx = song.layers++;
+                song.layersData[newIdx] = {
+                    name: `Layer ${newIdx + 1}`, volume: 100, pan: 100, locked: false, mute: false, solo: false,
+                    instrument: 0, customSound: null, pressKey: 36 + newIdx * 2,
+                    automation: {enabled: false, points: []}, notes: []
+                };
+                currentLayer = newIdx;
+                updateLayersPanel();
+                saveHistory();
+            } else {
+                alert('Maximum 16 layers!');
+            }
+        }
+
+        function deleteLayer() {
+            if (song.layers > 1 && !song.layersData[song.layers - 1].locked) {
+                song.layersData[song.layers - 1].notes = [];
+                song.layersData[song.layers - 1].automation.points = [];
+                song.layers--;
+                if (currentLayer >= song.layers) currentLayer = song.layers - 1;
+                updateLayersPanel();
+                drawPianoRoll();
+                saveHistory();
+            } else {
+                alert('Cannot delete last layer or locked layer!');
+            }
+        }
+
+        function changeLayerName(idx, name) { song.layersData[idx].name = name; updateLayersPanel(); }
+        function changeInstrument(idx, inst) { song.layersData[idx].instrument = parseInt(inst); updateLayersPanel(); }
+        function changeVolume(idx, vol) { song.layersData[idx].volume = parseInt(vol); }
+        function changePan(idx, pan) { song.layersData[idx].pan = parseInt(pan); }
+        function changePressKey(idx, key) { song.layersData[idx].pressKey = parseInt(key); }
+        function toggleMute(idx, mute) { song.layersData[idx].mute = mute; }
+        function toggleSolo(idx, solo) { song.layersData[idx].solo = solo; }
+
+        function layerProperties() { 
+            const l = song.layersData[currentLayer];
+            alert(`Layer ${currentLayer + 1}: Vol ${l.volume}, Pan ${l.pan}, Auto Points: ${l.automation.points.length}`); 
+        }
+
+        function drawPianoRoll() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height - 80; // Adjust for taller piano
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const tickWidth = 40 * zoom;
+    const pitchHeight = canvas.height / 25;
+    const visibleTicks = Math.floor(canvas.width / tickWidth) + 5;
+    const startTick = Math.floor(offsetX / tickWidth);
+
+    // Draw grid
+    if (showGrid) {
+        ctx.strokeStyle = isDark ? '#333' : '#ccc';
+        for (let t = 0; t < visibleTicks; t++) {
+            const x = (t * tickWidth) - (offsetX % tickWidth);
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let p = 0; p <= 25; p++) {
+            const y = p * pitchHeight;
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+    }
+
+    // Draw loop markers
+    if (loopEnabled) {
+        const startX = (song.loop.startTick - startTick) * tickWidth - offsetX % tickWidth;
+        const endX = (song.loop.endTick - startTick) * tickWidth - offsetX % tickWidth;
+        document.getElementById('loop-start').style.left = `${startX}px`;
+        document.getElementById('loop-end').style.left = `${endX}px`;
+        document.getElementById('loop-start').style.display = 'block';
+        document.getElementById('loop-end').style.display = 'block';
+    } else {
+        document.getElementById('loop-start').style.display = 'none';
+        document.getElementById('loop-end').style.display = 'none';
+    }
+
+    // Draw automation
+    const layer = song.layersData[currentLayer];
+    if (layer.automation.enabled) {
+        const points = layer.automation.points.sort((a,b) => a.tick - b.tick);
+        ctx.strokeStyle = '#FFEB3B';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        points.forEach((p, j) => {
+            const x = (p.tick - startTick) * tickWidth - offsetX % tickWidth;
+            const y = canvas.height - (p.vol / 100 * canvas.height / 2);
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    }
+
+    // Preload instrument images
+    const imageCache = {};
+    Object.keys(instrumentImages).forEach(key => {
+        imageCache[key] = new Image();
+        imageCache[key].src = instrumentImages[key];
+        imageCache[key].onerror = () => { console.error(`Failed to load image for instrument ${key}`); };
+    });
+
+    // Draw notes with instrument colors, images, and layer numbers
+    song.layersData.slice(0, song.layers).forEach((layer, l) => {
+        if (layer.locked) return;
+        layer.notes.forEach(note => {
+            if (note.tick + note.duration > startTick && note.tick < startTick + visibleTicks) {
+                const x = (note.tick - startTick) * tickWidth - offsetX % tickWidth;
+                const y = (24 - note.pitch) * pitchHeight;
+                const w = tickWidth * note.duration * 0.8;
+                const h = pitchHeight * 0.8;
+                const isSelected = selectedNotes.some(s => s.layer === l && s.tick === note.tick && s.pitch === note.pitch);
+                
+                // Draw note with instrument color
+                const instIdx = layer.instrument >= instruments.length ? 16 : layer.instrument;
+                ctx.fillStyle = isSelected ? '#FF9800' : (layer.mute ? '#666' : instrumentColors[instIdx]);
+                ctx.fillRect(x, y, w, h);
+                
+                // Draw velocity bar
+                ctx.fillStyle = isDark ? '#2E7D32' : '#1B5E20';
+                ctx.fillRect(x, y + h * (1 - (note.velocity || 100) / 100), w, h * ((note.velocity || 100) / 100));
+                
+                // Draw instrument image
+                const img = imageCache[instIdx];
+                if (img && img.complete && img.naturalWidth !== 0) {
+                    const imgSize = Math.min(w, h) * 0.5; // Scale image to 50% of note size
+                    const imgX = x + (w - imgSize) / 4; // Position image to left side
+                    const imgY = y + (h - imgSize) / 2; // Center vertically
+                    try {
+                        ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+                    } catch (err) {
+                        console.error(`Error drawing image for instrument ${instIdx}:`, err);
+                    }
+                }
+
+                // Draw layer number
+                ctx.fillStyle = isDark ? '#FFFFFF' : '#000000'; // White text in dark mode, black in light mode
+                ctx.font = `${Math.min(w, h) * 0.4}px 'Press Start 2P', sans-serif`; // Scale font size
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                const text = `${l + 1}`; // Layer number (1-based)
+                const textX = x + w - 2; // Position text to right side
+                const textY = y + h / 2; // Center vertically
+                ctx.fillText(text, textX, textY);
+            }
+        });
+    });
+
+    // Draw playback head
+    if (isPlaying) {
+        const x = (parseInt(document.getElementById('current-tick').textContent) * tickWidth) - offsetX;
+        ctx.strokeStyle = '#FFEB3B';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+}
+
+        function drawPianoKeys() {
+            const keysDiv = document.getElementById('piano-keys');
+            keysDiv.innerHTML = '';
+            const blackPositions = [1, 3, 6, 8, 10]; // Accurate black keys per octave
+            pitches.forEach((pitch, i) => {
+                const isBlack = blackPositions.includes(i % 12);
+                const key = document.createElement('div');
+                key.className = `key ${isBlack ? 'black' : 'white'}`;
+                const label = keyNames[i].replace(/[0-9]/g, '');
+                const fullLabel = showOctaveLabels ? keyNames[i] : '';
+                key.innerHTML = `<span>${label}</span><div class="octave-label">${fullLabel}</div>`;
+                key.onclick = (e) => { e.stopPropagation(); playNote(song.layersData[currentLayer].instrument, pitch); };
+                keysDiv.appendChild(key);
+            });
+        }
+
+        // Drag for layers
+        let draggedLayer = null;
+        const layersList = document.getElementById('layers-list');
+        layersList.addEventListener('dragstart', (e) => {
+            if (e.target.closest('.layer')) draggedLayer = e.target.closest('.layer');
+        });
+        layersList.addEventListener('dragover', (e) => e.preventDefault());
+        layersList.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedLayer && e.target.closest('.layer')) {
+                const layers = Array.from(layersList.children);
+                const from = Array.from(layersList.children).indexOf(draggedLayer);
+                const to = Array.from(layersList.children).indexOf(e.target.closest('.layer'));
+                if (from !== to) {
+                    layersList.insertBefore(layers[from], layers[to]);
+                    // Swap in song.layersData
+                    [song.layersData[from], song.layersData[to]] = [song.layersData[to], song.layersData[from]];
+                    updateLayersPanel(); // Refresh to update indices
+                    saveHistory();
+                }
+            }
+            draggedLayer = null;
+        });
+
+        canvas.addEventListener('mousedown', startEdit);
+        canvas.addEventListener('mousemove', dragEdit);
+        canvas.addEventListener('mouseup', endEdit);
+        canvas.addEventListener('wheel', zoomHandler, {passive: false});
+        canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+        let touchId = null;
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchId = touch.identifier;
+            const mouseEvent = new MouseEvent('mousedown', {clientX: touch.clientX, clientY: touch.clientY});
+            canvas.dispatchEvent(mouseEvent);
+        }, {passive: false});
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = Array.from(e.touches).find(t => t.identifier === touchId);
+            if (touch) {
+                const mouseEvent = new MouseEvent('mousemove', {clientX: touch.clientX, clientY: touch.clientY});
+                canvas.dispatchEvent(mouseEvent);
+            }
+        }, {passive: false});
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+            touchId = null;
+        }, {passive: false});
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (e.clientX - rect.left) * (canvas.width / rect.width),
+                y: (e.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function startEdit(e) {
+            const pos = getMousePos(e);
+            const tickWidth = 40 * zoom;
+            const pitchHeight = canvas.height / 25;
+            const tick = Math.floor((pos.x + offsetX) / tickWidth);
+            const pitch = Math.floor((canvas.height - pos.y) / pitchHeight);
+            if (pitch >= 0 && pitch <= 24 && tick >= 0 && !song.layersData[currentLayer].locked) {
+                isDragging = true;
+                selectStart = {x: pos.x + offsetX, y: pos.y + offsetY};
+                const dur = parseInt(document.getElementById('note-dur').value || 1);
+                if (e.button === 2 || tool === 'erase') {
+                    removeNote(tick, pitch);
+                } else if (tool === 'pencil') {
+                    addNote(tick, pitch, 100, 100, 0, dur);
+                } else if (tool === 'select') {
+                    isSelecting = true;
+                    clearSelection();
+                    selectionBox.style.display = 'block';
+                    selectionBox.style.left = `${pos.x}px`;
+                    selectionBox.style.top = `${pos.y}px`;
+                    selectionBox.style.width = '0px';
+                    selectionBox.style.height = '0px';
+                }
+                if (e.detail === 2) showNoteProperties(tick, pitch);
+            }
+            if (e.shiftKey) {
+                document.body.style.cursor = 'grab';
+            }
+        }
+
+        function dragEdit(e) {
+            const pos = getMousePos(e);
+            const tickWidth = 40 * zoom;
+            const pitchHeight = canvas.height / 25;
+            const tick = Math.floor((pos.x + offsetX) / tickWidth);
+            const pitch = Math.floor((canvas.height - pos.y) / pitchHeight);
+
+            if (isDragging && tool === 'pencil' && !e.shiftKey) {
+                const dur = parseInt(document.getElementById('note-dur').value || 1);
+                addNote(tick, pitch, 100, 100, 0, dur);
+            } else if (isSelecting && tool === 'select') {
+                const sx = Math.min(selectStart.x - offsetX, pos.x);
+                const sy = Math.min(selectStart.y - offsetY, pos.y);
+                const w = Math.abs(pos.x - (selectStart.x - offsetX));
+                const h = Math.abs(pos.y - (selectStart.y - offsetY));
+                selectionBox.style.left = `${sx}px`;
+                selectionBox.style.top = `${sy}px`;
+                selectionBox.style.width = `${w}px`;
+                selectionBox.style.height = `${h}px`;
+                clearSelection();
+                const startTick = Math.floor(selectStart.x / tickWidth);
+                const endTick = Math.floor((pos.x + offsetX) / tickWidth);
+                const startPitch = Math.floor((canvas.height - selectStart.y) / pitchHeight);
+                const endPitch = Math.floor((canvas.height - pos.y) / pitchHeight);
+                for (let t = Math.min(startTick, endTick); t <= Math.max(startTick, endTick); t++) {
+                    for (let p = Math.min(startPitch, endPitch); p <= Math.max(startPitch, endPitch); p++) {
+                        if (p >= 0 && p <= 24) {
+                            const note = song.layersData[currentLayer].notes.find(n => n.tick === t && n.pitch === p);
+                            if (note) selectedNotes.push({layer: currentLayer, tick: t, pitch: p});
+                        }
+                    }
+                }
+                drawPianoRoll();
+            } else if (e.shiftKey && isDragging) {
+                offsetX += (e.movementX || 0) * zoom;
+                offsetY += (e.movementY || 0);
+                drawPianoRoll();
+            }
+        }
+
+        function endEdit(e) {
+            isDragging = false;
+            isSelecting = false;
+            selectionBox.style.display = 'none';
+            document.body.style.cursor = 'default';
+            if (tool === 'pencil' || tool === 'erase') saveHistory();
+            drawPianoRoll();
+        }
+
+        function addNote(tick, pitch, velocity = 100, pan = 100, fade = 0, duration = 1) {
+            const snappedTick = Math.round(tick / gridSnap) * gridSnap;
+            if (snappedTick < 0) return;
+            const layer = song.layersData[currentLayer];
+            let existing = layer.notes.find(n => n.tick === snappedTick && n.pitch === pitch);
+            if (existing) {
+                existing.duration = duration;
+                existing.velocity = velocity;
+                existing.pan = pan;
+                existing.fade = fade;
+            } else {
+                layer.notes.push({tick: snappedTick, pitch, velocity, pan, fade, duration});
+                layer.notes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch);
+            }
+            song.length = Math.max(song.length, snappedTick + duration);
+        }
+
+        function removeNote(tick, pitch) {
+            const layer = song.layersData[currentLayer];
+            const idx = layer.notes.findIndex(n => n.tick === tick && n.pitch === pitch);
+            if (idx > -1) {
+                layer.notes.splice(idx, 1);
+                selectedNotes = selectedNotes.filter(s => !(s.layer === currentLayer && s.tick === tick && s.pitch === pitch));
+            }
+        }
+
+        function clearSelection() { selectedNotes = []; }
+
+        function showNoteProperties(tick, pitch) {
+            const note = song.layersData[currentLayer].notes.find(n => n.tick === tick && n.pitch === pitch);
+            if (note) {
+                document.getElementById('note-vel').value = note.velocity || 100;
+                document.getElementById('vel-val').textContent = note.velocity || 100;
+                document.getElementById('note-pan').value = note.pan || song.layersData[currentLayer].pan;
+                document.getElementById('pan-val').textContent = note.pan || song.layersData[currentLayer].pan;
+                document.getElementById('note-fade').value = note.fade || 0;
+                document.getElementById('fade-val').textContent = note.fade || 0;
+                document.getElementById('note-dur').value = note.duration || 1;
+                document.getElementById('dur-val').textContent = note.duration || 1;
+                document.getElementById('note-properties').style.display = 'block';
+                window.currentNoteProps = {layer: currentLayer, tick, pitch};
+                document.getElementById('note-vel').oninput = (e) => document.getElementById('vel-val').textContent = e.target.value;
+                document.getElementById('note-pan').oninput = (e) => document.getElementById('pan-val').textContent = e.target.value;
+                document.getElementById('note-fade').oninput = (e) => document.getElementById('fade-val').textContent = e.target.value;
+                document.getElementById('note-dur').oninput = (e) => document.getElementById('dur-val').textContent = e.target.value;
+            }
+        }
+
+        function applyNoteProps() {
+            const {layer, tick, pitch} = window.currentNoteProps;
+            const note = song.layersData[layer].notes.find(n => n.tick === tick && n.pitch === pitch);
+            if (note) {
+                note.velocity = parseInt(document.getElementById('note-vel').value);
+                note.pan = parseInt(document.getElementById('note-pan').value);
+                note.fade = parseInt(document.getElementById('note-fade').value);
+                note.duration = parseInt(document.getElementById('note-dur').value);
+                saveHistory();
+                drawPianoRoll();
+            }
+            closeDialog('note-properties');
+        }
+
+        function closeDialog(id) { document.getElementById(id).style.display = 'none'; }
+
+        function zoomHandler(e) {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 1.1 : 0.9;
+            zoom *= delta;
+            zoom = Math.max(0.5, Math.min(zoom, 5));
+            offsetX *= delta;
+            offsetY *= delta;
+            drawPianoRoll();
+        }
+
+        function zoomIn() { zoom *= 1.2; drawPianoRoll(); }
+        function zoomOut() { zoom /= 1.2; drawPianoRoll(); }
+
+        function resetView() { zoom = 1; offsetX = 0; offsetY = 0; drawPianoRoll(); }
+
+        function changeTool(t) { tool = t; updateStatus(); }
+        function changeSnap(s) { gridSnap = parseInt(s); updateStatus(); }
+        function updateStatus() {
+            document.getElementById('status').textContent = `Snap: 1/${gridSnap} | Tool: ${tool === 'pencil' ? 'âœ' : tool === 'erase' ? 'ðŸ—‘' : 'ðŸ”˜'} ${tool}`;
+        }
+
+        function toggleGrid() { showGrid = !showGrid; drawPianoRoll(); }
+        function togglePiano() { showPiano = !showPiano; document.getElementById('piano-keys').style.display = showPiano ? 'flex' : 'none'; }
+        function toggleTheme() {
+            isDark = !isDark;
+            document.body.classList.toggle('light', !isDark);
+            drawPianoRoll();
+        }
+        function toggleSnap() { gridSnap = gridSnap === 1 ? 4 : 1; document.getElementById('snap').value = gridSnap; updateStatus(); drawPianoRoll(); }
+
+        function quantize() {
+            const layer = song.layersData[currentLayer];
+            layer.notes.forEach(n => {
+                if (selectedNotes.length === 0 || selectedNotes.some(s => s.layer === currentLayer && s.tick === n.tick && s.pitch === n.pitch)) {
+                    n.tick = Math.round(n.tick / gridSnap) * gridSnap;
+                }
+            });
+            layer.notes.sort((a, b) => a.tick - b.tick);
+            drawPianoRoll();
+            saveHistory();
+        }
+
+        function transpose(oct) {
+            song.layersData[currentLayer].notes.forEach(n => {
+                if (selectedNotes.length === 0 || selectedNotes.some(s => s.layer === currentLayer && s.tick === n.tick && s.pitch === n.pitch)) {
+                    n.pitch = Math.max(0, Math.min(24, n.pitch + oct));
+                }
+            });
+            drawPianoRoll();
+            saveHistory();
+        }
+
+        function selectAll() {
+            const layer = song.layersData[currentLayer];
+            clearSelection();
+            layer.notes.forEach(n => selectedNotes.push({layer: currentLayer, tick: n.tick, pitch: n.pitch}));
+            drawPianoRoll();
+        }
+
+        function deleteSelected() {
+            selectedNotes.forEach(s => removeNote(s.tick, s.pitch));
+            clearSelection();
+            saveHistory();
+            drawPianoRoll();
+        }
+
+        function copy() {
+            clipboard = selectedNotes.map(s => ({
+                layer: currentLayer,
+                tick: s.tick,
+                pitch: s.pitch,
+                ...song.layersData[currentLayer].notes.find(n => n.tick === s.tick && n.pitch === s.pitch)
+            }));
+        }
+
+        function cut() {
+            copy();
+            deleteSelected();
+        }
+
+        function paste() {
+            clipboard.forEach(clip => {
+                addNote(clip.tick, clip.pitch, clip.velocity, clip.pan, clip.fade, clip.duration);
+            });
+            clearSelection();
+            saveHistory();
+            drawPianoRoll();
+        }
+
+        function saveHistory() {
+            history = history.slice(0, historyIndex + 1);
+            history.push(JSON.parse(JSON.stringify(song)));
+            historyIndex = history.length - 1;
+            if (history.length > 50) history.shift();
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                song = JSON.parse(JSON.stringify(history[historyIndex]));
+                updateLayersPanel();
+                drawPianoRoll();
+                document.getElementById('tempo').value = song.tempo / 100;
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                song = JSON.parse(JSON.stringify(history[historyIndex]));
+                updateLayersPanel();
+                drawPianoRoll();
+                document.getElementById('tempo').value = song.tempo / 100;
+            }
+        }
+
+        function openFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.nbs';
+            input.onchange = e => loadNBS(e.target.files[0]);
+            input.click();
+        }
+
+        async function loadNBS(file) {
+            try {
+                const buffer = await file.arrayBuffer();
+                const view = new DataView(buffer);
+                let offset = 0;
+
+                const version = view.getUint16(offset, false); offset += 2;
+                if (version !== 4 && version !== 5) throw new Error('Invalid NBS version');
+                song.version = version;
+
+                song.vanillaInstrumentCount = view.getUint8(offset++); 
+                song.length = view.getUint16(offset, false); offset += 2; 
+                song.layers = view.getUint16(offset, false); offset += 2;
+
+                function readString() {
+                    const len = view.getUint32(offset, false); offset += 4;
+                    const str = new TextDecoder('utf-8').decode(new Uint8Array(buffer.slice(offset, offset + len)));
+                    offset += len;
+                    return str;
+                }
+                song.title = readString();
+                song.author = readString();
+                if (version >= 4) song.originalAuthor = readString();
+                song.description = readString();
+
+                song.tempo = view.getUint16(offset, false); offset += 2;
+                song.autosave = view.getUint8(offset++); 
+                song.autosaveDuration = view.getUint8(offset++);
+                song.timeSignature = view.getUint8(offset++);
+                song.minutesSpent = view.getUint32(offset, false); offset += 4;
+                song.leftClicks = view.getUint32(offset, false); offset += 4;
+                song.rightClicks = view.getUint32(offset, false); offset += 4;
+                song.blocksAdded = view.getUint32(offset, false); offset += 4;
+                song.blocksRemoved = view.getUint32(offset, false); offset += 4;
+                if (version >= 4) {
+                    song.midiFilename = readString();
+                    song.loop = {
+                        enabled: view.getUint8(offset++) !== 0,
+                        maxCount: view.getUint16(offset, false),
+                        startTick: view.getUint16(offset + 2, false),
+                        endTick: view.getUint16(offset + 4, false)
+                    };
+                    offset += 6;
+                }
+
+                const layerCount = view.getUint16(offset, false); offset += 2;
+                song.layersData = Array(Math.min(layerCount, 16)).fill().map(() => ({
+                    name: readString(),
+                    volume: view.getUint8(offset++),
+                    pan: view.getUint8(offset++),
+                    locked: view.getUint8(offset++) !== 0,
+                    mute: view.getUint8(offset++) !== 0,
+                    solo: view.getUint8(offset++) !== 0,
+                    instrument: view.getUint8(offset++),
+                    customSound: null,
+                    pressKey: 36,
+                    automation: { enabled: false, points: [] },
+                    notes: []
+                }));
+
+                const noteCount = view.getUint16(offset, false); offset += 2;
+                for (let i = 0; i < noteCount; i++) {
+                    const tick = view.getUint32(offset, false); offset += 4;
+                    const layer = view.getUint8(offset++);
+                    const pitch = view.getUint8(offset++);
+                    const velocity = view.getUint8(offset++);
+                    if (version >= 4) {
+                        const pan = view.getUint8(offset++);
+                        const fade = view.getUint8(offset++);
+                        const duration = view.getUint16(offset, false); offset += 2;
+                        if (layer < song.layersData.length) {
+                            song.layersData[layer].notes.push({ tick, pitch, velocity, pan, fade, duration });
+                        }
+                    } else {
+                        if (layer < song.layersData.length) {
+                            song.layersData[layer].notes.push({ tick, pitch, velocity, pan: 100, fade: 0, duration: 1 });
+                        }
+                    }
+                }
+
+                song.layersData.forEach(l => l.notes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch));
+                song.length = Math.max(...song.layersData.map(l => l.notes.length ? Math.max(...l.notes.map(n => n.tick + n.duration)) + 1 : 0), 1);
+                currentLayer = 0;
+                updateLayersPanel();
+                drawPianoRoll();
+                saveHistory();
+                document.getElementById('tempo').value = song.tempo / 100;
+                document.getElementById('song-title').value = song.title;
+                document.getElementById('song-author').value = song.author;
+                document.getElementById('song-desc').value = song.description;
+                alert('Song loaded successfully!');
+            } catch (err) {
+                alert('Error loading NBS: ' + err.message);
+            }
+        }
+
+        function saveFile() {
+            const blob = new Blob([saveNBS()], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${song.title || 'untitled'}.nbs`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function saveAsFile() {
+            const title = prompt('Save as filename:', song.title || 'untitled');
+            if (title) {
+                song.title = title;
+                saveFile();
+            }
+        }
+
+        function saveNBS() {
+            const encoder = new TextEncoder();
+            let data = new Uint8Array(0);
+            const append = (arr) => { const tmp = new Uint8Array(data.length + arr.length); tmp.set(data); tmp.set(arr, data.length); data = tmp; };
+            const appendString = (str) => { const encoded = encoder.encode(str + '\0'); append(new Uint32Array([encoded.length - 1]).buffer); append(encoded); };
+
+            append(new Uint16Array([song.version]).buffer);
+            append(new Uint8Array([song.vanillaInstrumentCount]).buffer);
+            append(new Uint16Array([song.length]).buffer);
+            append(new Uint16Array([song.layers]).buffer);
+
+            appendString(song.title);
+            appendString(song.author);
+            if (song.version >= 4) appendString(song.originalAuthor || '');
+            appendString(song.description);
+
+            append(new Uint16Array([song.tempo]).buffer);
+            append(new Uint8Array([song.autosave]).buffer);
+            append(new Uint8Array([song.autosaveDuration]).buffer);
+            append(new Uint8Array([song.timeSignature]).buffer);
+
+            append(new Uint32Array([song.minutesSpent]).buffer);
+            append(new Uint32Array([song.leftClicks]).buffer);
+            append(new Uint32Array([song.rightClicks]).buffer);
+            append(new Uint32Array([song.blocksAdded]).buffer);
+            append(new Uint32Array([song.blocksRemoved]).buffer);
+
+            if (song.version >= 4) {
+                appendString(song.midiFilename || '');
+                append(new Uint8Array([song.loop.enabled ? 1 : 0]).buffer);
+                append(new Uint16Array([song.loop.maxCount, song.loop.startTick, song.loop.endTick]).buffer);
+            }
+
+            append(new Uint16Array([song.layers]).buffer);
+            song.layersData.slice(0, song.layers).forEach(l => {
+                appendString(l.name);
+                append(new Uint8Array([l.volume, l.pan, l.locked ? 1 : 0, l.mute ? 1 : 0, l.solo ? 1 : 0, l.instrument]).buffer);
+            });
+
+            const notes = [];
+            song.layersData.slice(0, song.layers).forEach((l, layerIdx) => {
+                l.notes.forEach(n => notes.push({ ...n, layer: layerIdx }));
+            });
+            notes.sort((a, b) => a.tick - b.tick);
+            append(new Uint16Array([notes.length]).buffer);
+            notes.forEach(n => {
+                append(new Uint32Array([n.tick]).buffer);
+                append(new Uint8Array([n.layer, n.pitch, n.velocity]).buffer);
+                if (song.version >= 4) {
+                    append(new Uint8Array([n.pan, n.fade]).buffer);
+                    append(new Uint16Array([n.duration]).buffer);
+                }
+            });
+
+            return data;
+        }
+
+        function importMidi() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.mid';
+            input.onchange = e => alert('MIDI import not fully implemented yet!');
+            input.click();
+        }
+
+        function exportMidi() { alert('MIDI export not fully implemented yet!'); }
+        function exportSchematic() { alert('Schematic export not fully implemented yet!'); }
+        function exitApp() { if (confirm('Exit application?')) window.close(); }
+
+        function showSongInfo() {
+            document.getElementById('song-info').style.display = 'block';
+            document.getElementById('song-title').value = song.title;
+            document.getElementById('song-author').value = song.author;
+            document.getElementById('song-desc').value = song.description;
+        }
+
+        function saveSongInfo() {
+            song.title = document.getElementById('song-title').value;
+            song.author = document.getElementById('song-author').value;
+            song.description = document.getElementById('song-desc').value;
+            closeDialog('song-info');
+            saveHistory();
+        }
+
+        function showAbout() {
+            alert('Open Note Block Studio Superior - Version Ultimate\nCreated by [Your Name]\nInspired by Note Block Studio');
+        }
+
+        function testSound() {
+            playNote(song.layersData[currentLayer].instrument, 12); // Test with middle C
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === ' ') togglePlay();
+            else if (e.key === 'Delete') deleteSelected();
+            else if (e.key === 'z' && e.ctrlKey) undo();
+            else if (e.key === 'y' && e.ctrlKey) redo();
+            else if (e.key === 'c' && e.ctrlKey) copy();
+            else if (e.key === 'x' && e.ctrlKey) cut();
+            else if (e.key === 'v' && e.ctrlKey) paste();
+            else if (e.key >= '1' && e.key <= '9') {
+                const idx = parseInt(e.key) - 1;
+                if (idx < song.layers) { currentLayer = idx; updateLayersPanel(); drawPianoRoll(); }
+            } else if (e.key.toLowerCase() === 'l') toggleLoop();
+            else if (e.key.toLowerCase() === 'n') newSong();
+        });
+
+        window.addEventListener('resize', () => {
+            drawPianoRoll();
+            drawPianoKeys();
+        });
+        init();
+    </script>
+</body>
+</html>
