@@ -27,7 +27,6 @@
             overflow: hidden; 
             display: flex; 
             flex-direction: column; 
-        }
         body.light { background: linear-gradient(135deg, #f0f0f0, #e0e0e0); color: #000; }
         #menu { 
             background: rgba(51, 51, 51, 0.9); 
@@ -276,68 +275,88 @@
             border-color: #2196f3; 
         }
         .note {
-        position: absolute;
-        border: 2px solid;
-        border-image-slice: 1;
-        border-width: 2px;
-        border-image-source: linear-gradient(45deg, #42a5f5, #478ed1);
-        border-radius: 8px;
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    position: absolute;
+    border: 2px solid transparent;
+    border-radius: 12px; /* Softer rounding */
+    background: linear-gradient(135deg, #f0f7ff 0%, #e1f5fe 50%, #b3e5fc 100%); /* Softer blue gradient */
+    box-shadow:
+        0 8px 16px rgba(66, 165, 245, 0.15), /* Subtle outer shadow */
+        0 4px 8px rgba(0, 0, 0, 0.05),      /* Depth */
+        inset 0 2px 4px rgba(255, 255, 255, 0.6), /* Inner highlight */
+        inset 0 -2px 4px rgba(0, 0, 0, 0.05);     /* Inner depth */
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth, natural easing */
+    animation: noteAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* Elastic but subtle */
+    cursor: pointer;
+    user-select: none;
+    backdrop-filter: blur(10px); /* Frosted glass for modern feel (fallback: none) */
+    border-image: linear-gradient(45deg, #42a5f5, #2196f3) 1; /* Smooth border gradient */
+}
+
+.note:hover {
+    transform: scale(1.05) translateY(-2px) rotate(-1deg); /* Gentle lift and tilt */
+    box-shadow:
+        0 12px 24px rgba(66, 165, 245, 0.25),
+        0 6px 12px rgba(0, 0, 0, 0.1),
+        inset 0 3px 6px rgba(255, 255, 255, 0.7),
+        inset 0 -3px 6px rgba(0, 0, 0, 0.08);
+    border-image: linear-gradient(45deg, #1e88e5, #1976d2) 1; /* Deeper blue on hover */
+    background: linear-gradient(135deg, #e8f4ff 0%, #d6eaf8 50%, #aed6f1 100%);
+}
+
+.note.playing {
+    animation: notePlay 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards; /* Keep some bounce for "play" energy, but longer duration */
+}
+
+@keyframes noteAppear {
+    0% {
+        transform: scale(0.8) rotate(5deg); /* Less extreme start */
+        opacity: 0;
+        filter: blur(8px); /* Subtle blur fade-in */
+    }
+    60% {
+        transform: scale(1.05) rotate(-2deg);
+        opacity: 1;
+        filter: blur(0);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes notePlay {
+    0% {
+        transform: scale(1) rotate(0deg);
         box-shadow:
-            0 6px 12px rgba(33, 150, 243, 0.25),
-            inset 0 3px 6px rgba(255, 255, 255, 0.4);
-        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.35s ease;
-        animation: noteAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        cursor: pointer;
-        user-select: none;
+            0 8px 16px rgba(66, 165, 245, 0.15),
+            0 4px 8px rgba(0, 0, 0, 0.05),
+            inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        border-image: linear-gradient(45deg, #42a5f5, #2196f3) 1;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e1f5fe 50%, #b3e5fc 100%);
     }
-    .note:hover {
-        transform: scale(1.08) rotate(-2deg);
+    50% {
+        transform: scale(1.15) rotate(2deg); /* Subtle pulse/rotate */
         box-shadow:
-            0 10px 20px rgba(33, 150, 243, 0.45),
-            inset 0 4px 8px rgba(255, 255, 255, 0.5);
-        border-image-source: linear-gradient(45deg, #1e88e5, #1565c0);
+            0 0 32px rgba(255, 152, 0, 0.6), /* Warm orange glow for energy */
+            0 16px 32px rgba(244, 143, 177, 0.4), /* Pink accent */
+            inset 0 4px 8px rgba(255, 193, 7, 0.5); /* Inner golden pulse */
+        border-image: linear-gradient(45deg, #ff9800, #f57c00) 1; /* Orange border */
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #ffcc80 100%); /* Warm background shift */
+        filter: brightness(1.2); /* Slight brighten for "active" feel */
     }
-    .note.playing {
-        animation: notePlay 0.6s ease forwards;
+    100% {
+        transform: scale(1) rotate(0deg);
+        box-shadow:
+            0 8px 16px rgba(66, 165, 245, 0.15),
+            0 4px 8px rgba(0, 0, 0, 0.05),
+            inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        border-image: linear-gradient(45deg, #42a5f5, #2196f3) 1;
+        background: linear-gradient(135deg, #f0f7ff 0%, #e1f5fe 50%, #b3e5fc 100%);
+        filter: brightness(1);
     }
-    @keyframes noteAppear {
-        0% {
-            transform: scale(0.5) rotate(10deg);
-            opacity: 0;
-        }
-        60% {
-            transform: scale(1.15) rotate(-5deg);
-            opacity: 1;
-        }
-        100% {
-            transform: scale(1) rotate(0deg);
-            opacity: 1;
-        }
-    }
-    @keyframes notePlay {
-        0% {
-            transform: scale(1) rotate(0deg);
-            box-shadow:
-                0 6px 12px rgba(33, 150, 243, 0.25),
-                inset 0 3px 6px rgba(255, 255, 255, 0.4);
-            border-image-source: linear-gradient(45deg, #42a5f5, #478ed1);
-        }
-        50% {
-            transform: scale(1.25) rotate(5deg);
-            box-shadow:
-                0 0 30px rgba(244, 67, 54, 0.8),
-                inset 0 6px 12px rgba(255, 82, 82, 0.6);
-            border-image-source: linear-gradient(45deg, #ef5350, #b71c1c);
-        }
-        100% {
-            transform: scale(1) rotate(0deg);
-            box-shadow:
-                0 6px 12px rgba(33, 150, 243, 0.25),
-                inset 0 3px 6px rgba(255, 255, 255, 0.4);
-            border-image-source: linear-gradient(45deg, #42a5f5, #478ed1);
-        }
-    }
+}
+
 
         #song-info, #note-properties { 
             position: absolute; 
@@ -556,6 +575,30 @@
             </div>
         </div>
     </div>
+    <div id="note-editor-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #2a2a2a; color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;">
+    <h3>Edit Note</h3>
+    <div>
+        <label for="note-velocity">Velocity (0-100):</label>
+        <input type="number" id="note-velocity" min="0" max="100" value="100">
+    </div>
+    <div>
+        <label for="note-pan">Pan (0-200, 100=center):</label>
+        <input type="number" id="note-pan" min="0" max="200" value="100">
+    </div>
+    <div>
+        <label for="note-fade">Fade (0-255, 0=no fade):</label>
+        <input type="number" id="note-fade" min="0" max="255" value="0">
+    </div>
+    <div>
+        <label for="note-duration">Duration (ticks):</label>
+        <input type="number" id="note-duration" min="1" max="1000" value="1">
+    </div>
+    <div style="margin-top: 10px;">
+        <button onclick="saveNoteSettings()">Save</button>
+        <button onclick="closeNoteEditor()">Cancel</button>
+    </div>
+</div>
+<div id="modal-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
     <div id="toolbar">
         <button id="play" class="icon-btn" onclick="togglePlay()" disabled>
             <img src="https://minecraft.wiki/images/Note_Block_JE2_BE2.png" alt="Play" onerror="this.innerHTML='â¸ ' + this.innerHTML.substring(2)">Play Load...
@@ -620,6 +663,17 @@
                 <button onclick="saveSongInfo()">Save</button>
                 <button onclick="closeDialog('song-info')">Close</button>
             </div>
+            <div id="note-selector-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #2a2a2a; color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;">
+    <h3>Please Pick one of Note to Edit</h3>
+    <select id="note-selector">
+        <option value="">Choose note (still build)</option>
+        <!-- Options ditambah dinamik via JS -->
+    </select>
+    <div style="margin-top: 10px;">
+        <button onclick="openNoteProperties()">Edit</button>
+        <button onclick="closeNoteSelector()">Close</button>
+    </div>
+</div>
             <div id="note-properties">
                 <h4>Note Properties</h4>
                 <label>Velocity: <input type="range" id="note-vel" min="0" max="100" value="100"><span id="vel-val">100</span>%</label>
@@ -669,6 +723,9 @@
                 notes: []
             }))
         };
+        let editingNote = null;
+let editingLayerIndex = null;
+        let startTime = Date.now(); 
         let history = [];
         let historyIndex = -1;
         let currentLayer = 0;
@@ -773,42 +830,78 @@
         }
 
         async function preloadSounds() {
-            instrumentBuffers = new Array(instruments.length);
-            let loadedCount = 0;
-            let failedCount = 0;
+    instrumentBuffers = new Array(instruments.length);
+    let loadedCount = 0;
+    let failedCount = 0;
 
-            for (let i = 0; i < instruments.length; i++) {
+    for (let i = 0; i < instruments.length; i++) {
+        try {
+            updateProgress(i + 1, instruments.length);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // Timeout setelah 5 detik
+            const response = await fetch(soundUrls[i], {
+                mode: 'cors',
+                credentials: 'omit',
+                headers: { 'Content-Type': 'audio/mpeg' },
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const arrayBuffer = await response.arrayBuffer();
+            instrumentBuffers[i] = await audioContext.decodeAudioData(arrayBuffer).catch(err => {
+                console.error(`Decode failed: ${err}`);
+                return null;
+            });
+            if (instrumentBuffers[i]) loadedCount++;
+            else throw new Error('Decoding failed');
+        } catch (err) {
+            console.error(`Failed to load ${instruments[i]}:`, err);
+            instrumentBuffers[i] = null;
+            failedCount++;
+            if (failedCount < instruments.length) {
                 try {
-                    updateProgress(i + 1, instruments.length);
-                    const response = await fetch(soundUrls[i], { mode: 'cors', credentials: 'omit', headers: { 'Content-Type': 'audio/mpeg' } });
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const arrayBuffer = await response.arrayBuffer();
-                    instrumentBuffers[i] = await audioContext.decodeAudioData(arrayBuffer).catch(err => { console.error(`Decode failed: ${err}`); return null; });
-                    if (instrumentBuffers[i]) loadedCount++;
-                    else throw new Error('Decoding failed');
-                } catch (err) {
-                    console.error(`Failed to load ${instruments[i]}:`, err);
-                    instrumentBuffers[i] = null;
-                    failedCount++;
-                    if (failedCount < instruments.length) {
-                        const retryResponse = await fetch(soundUrls[i], { mode: 'cors', credentials: 'omit' });
-                        if (retryResponse.ok) {
-                            const retryBuffer = await retryResponse.arrayBuffer();
-                            instrumentBuffers[i] = await audioContext.decodeAudioData(retryBuffer);
-                            if (instrumentBuffers[i]) {
-                                loadedCount++;
-                                failedCount--;
-                            }
+                    const retryController = new AbortController();
+                    const retryTimeout = setTimeout(() => retryController.abort(), 5000);
+                    const retryResponse = await fetch(soundUrls[i], {
+                        mode: 'cors',
+                        credentials: 'omit',
+                        signal: retryController.signal
+                    });
+                    clearTimeout(retryTimeout);
+                    if (retryResponse.ok) {
+                        const retryBuffer = await retryResponse.arrayBuffer();
+                        instrumentBuffers[i] = await audioContext.decodeAudioData(retryBuffer);
+                        if (instrumentBuffers[i]) {
+                            loadedCount++;
+                            failedCount--;
                         }
                     }
+                } catch (retryErr) {
+                    console.error(`Retry failed for ${instruments[i]}:`, retryErr);
                 }
             }
-
-            soundsLoaded = true;
-            if (failedCount > 0) console.warn(`${failedCount} instruments failed to load.`);
-            if (loadedCount === 0) alert('No sounds loaded. Check connection.');
-            else console.log(`Loaded ${loadedCount}/${instruments.length} sounds.`);
         }
+    }
+
+    soundsLoaded = true;
+    document.getElementById('load-status').textContent = `Loaded ${loadedCount}/${instruments.length} instruments.`;
+    if (failedCount > 0) {
+        alert(`${failedCount} instruments failed to load. Some sounds may not play.`);
+    }
+    if (loadedCount === 0) {
+        alert('No sounds loaded. Please check your internet connection or try different sound URLs.');
+        document.getElementById('start-audio').style.display = 'block'; // Biarkan pengguna mencoba lagi
+    } else {
+        enableUI();
+        document.getElementById('play').disabled = false;
+        document.getElementById('start-audio').style.display = 'none';
+        drawPianoKeys();
+        updateLayersPanel();
+        drawPianoRoll();
+        playNote(0, 12);
+        showLoading(false);
+    }
+}
 
         function downloadSounds() {
             alert('Sounds included via Catbox URLs. Ensure internet connection!');
@@ -1112,53 +1205,81 @@
         }
 
         function updateLayersPanel() {
-            const list = document.getElementById('layers-list');
-            list.innerHTML = '';
-            song.layersData.slice(0, song.layers).forEach((layer, i) => {
-                const div = document.createElement('div');
-                div.className = `layer ${i === currentLayer ? 'current' : ''}`;
-                div.draggable = true;
-                const instName = layer.instrument >= instruments.length ? 'Custom' : instruments[layer.instrument];
-                div.innerHTML = `
-                    <div class="layer-header">
-                        <span class="layer-drag-handle">â‹®â‹®</span>
-                        <span class="layer-color-indicator" style="background-color: ${layerColors[i]};"></span>
-                        <strong>${layer.name} (${instName})</strong>
-                        <span>${layer.locked ? 'ðŸ”’' : ''} 
-                            <input type="checkbox" ${layer.mute ? 'checked' : ''} onchange="toggleMute(${i}, this.checked)"> M
-                            <input type="checkbox" ${layer.solo ? 'checked' : ''} onchange="toggleSolo(${i}, this.checked)"> S
-                            <input type="checkbox" ${layer.automation.enabled ? 'checked' : ''} onchange="toggleAutomation(${i}, this.checked)"> A
-                            <button onclick="duplicateLayerFor(${i})" style="font-size:8px;">Dup</button>
-                        </span>
-                    </div>
-                    <input type="text" value="${layer.name}" onchange="changeLayerName(${i}, this.value)">
-                    <select onchange="changeInstrument(${i}, this.value)">
-                        ${instruments.map((inst, j) => `<option value="${j}" ${layer.instrument === j ? 'selected' : ''}>${inst}</option>`).join('')}
-                        <option value="16" ${layer.instrument === 16 ? 'selected' : ''}>Custom (Upload)</option>
-                    </select>
-                    <button onclick="uploadCustom(${i})">Upload Sound</button>
-                    <label>Vol: <input type="range" min="0" max="100" value="${layer.volume}" onchange="changeVolume(${i}, this.value)"></label>
-                    <label>Pan: <input type="range" min="0" max="200" value="${layer.pan}" onchange="changePan(${i}, this.value)"></label>
-                    <label>Key: <input type="number" value="${layer.pressKey}" min="0" max="127" onchange="changePressKey(${i}, this.value)"></label>
-                    <div id="auto-${i}" style="display:none;">
-                        <label>Automation Points: <button onclick="addAutoPoint(${i})">Add</button></label>
-                        <div id="points-${i}"></div>
-                    </div>
-                `;
-                div.onclick = (e) => {
-                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON') {
-                        currentLayer = i;
-                        updateLayersPanel();
-                        drawPianoRoll();
-                    }
-                };
-                list.appendChild(div);
-                if (layer.automation.enabled) {
-                    document.getElementById(`auto-${i}`).style.display = 'block';
-                    updateAutoPoints(i);
-                }
-            });
+    const list = document.getElementById('layers-list');
+    if (!list) {
+        console.error('Layers list element not found');
+        return;
+    }
+    list.innerHTML = '';
+    currentLayer = Math.max(0, Math.min(currentLayer, song.layersData.length - 1));
+
+    if (!song.layersData || song.layersData.length === 0) {
+        console.warn('No layers to display in layers panel. Adding default layer.');
+        song.layersData = [{
+            name: 'Layer 1',
+            volume: 100,
+            pan: 100,
+            locked: false,
+            mute: false,
+            solo: false,
+            instrument: 0,
+            customSound: null,
+            pressKey: 36,
+            automation: { enabled: false, points: [] },
+            notes: []
+        }];
+        song.layers = 1;
+    }
+
+    song.layersData.slice(0, song.layers).forEach((layer, i) => {
+        if (!layer || !layer.automation || !layer.notes) {
+            console.warn('Invalid layer at index', i, 'Skipping');
+            return;
         }
+        const div = document.createElement('div');
+        div.className = `layer ${i === currentLayer ? 'current' : ''}`;
+        div.draggable = true;
+        const instName = layer.instrument >= instruments.length ? 'Custom' : instruments[layer.instrument];
+        div.innerHTML = `
+            <div class="layer-header">
+                <span class="layer-drag-handle" draggable="true">â‹®â‹®</span>
+                <span class="layer-color-indicator" style="background-color: ${layerColors[i % layerColors.length]};"></span>
+                <strong>${layer.name} (${instName})</strong>
+                <span>${layer.locked ? 'ðŸ”’' : ''} 
+                    <input type="checkbox" ${layer.mute ? 'checked' : ''} onchange="toggleMute(${i}, this.checked)"> M
+                    <input type="checkbox" ${layer.solo ? 'checked' : ''} onchange="toggleSolo(${i}, this.checked)"> S
+                    <input type="checkbox" ${layer.automation.enabled ? 'checked' : ''} onchange="toggleAutomation(${i}, this.checked)"> A
+                    <button onclick="duplicateLayerFor(${i})" style="font-size:8px;">Dup</button>
+                    <button onclick="openNoteSelector(${i})" style="font-size:8px;">Edit Notes</button>
+                </span>
+            </div>
+            <input type="text" value="${layer.name}" onchange="changeLayerName(${i}, this.value)" placeholder="Layer Name">
+            <select onchange="changeInstrument(${i}, this.value)">
+                ${instruments.map((inst, j) => `<option value="${j}" ${layer.instrument === j ? 'selected' : ''}>${inst}</option>`).join('')}
+                <option value="16" ${layer.instrument === 16 ? 'selected' : ''}>Custom (Upload)</option>
+            </select>
+            <button onclick="uploadCustom(${i})" style="font-size:10px;">Upload Sound</button>
+            <label>Vol: <input type="range" min="0" max="100" value="${layer.volume}" onchange="changeVolume(${i}, this.value)"></label>
+            <label>Pan: <input type="range" min="0" max="200" value="${layer.pan}" onchange="changePan(${i}, this.value)"></label>
+            <label>Key: <input type="number" value="${layer.pressKey}" min="0" max="127" onchange="changePressKey(${i}, this.value)"></label>
+            <div id="auto-${i}" style="display:${layer.automation.enabled ? 'block' : 'none'};">
+                <label>Automation Points: <button onclick="addAutoPoint(${i})">Add</button></label>
+                <div id="points-${i}"></div>
+            </div>
+        `;
+        div.onclick = (e) => {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && e.target.tagName !== 'BUTTON') {
+                currentLayer = i;
+                updateLayersPanel();
+                drawPianoRoll();
+            }
+        };
+        list.appendChild(div);
+        if (layer.automation.enabled) {
+            updateAutoPoints(i);
+        }
+    });
+}
 
         function duplicateLayerFor(i) {
             if (song.layers < 16) {
@@ -1267,173 +1388,279 @@
         }
 
         function drawPianoRoll() {
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = 60 * 200 + 110;
-        canvas.height = 48 * keyNames.length;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!canvas || !ctx) {
+        console.error('Piano roll canvas or context not found');
+        return;
+    }
+    currentLayer = Math.max(0, Math.min(currentLayer, song.layersData.length - 1));
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = 60 * 200 + 110;
+    canvas.height = 48 * keyNames.length;
 
-        const labelWidth = 110;
-        const tickWidth = 60 * zoom;
-        const pitchHeight = 48;
-        const visibleTicks = Math.floor((rect.width - labelWidth) / tickWidth) + 5;
-        const startTick = Math.floor(offsetX / tickWidth);
-        const startPitch = Math.floor(offsetY / pitchHeight);
+    const labelWidth = 110;
+    const tickWidth = 60 * zoom;
+    const pitchHeight = 48;
+    const visibleTicks = Math.floor((rect.width - labelWidth) / tickWidth) + 5;
+    const startTick = Math.floor(offsetX / tickWidth);
+    const startPitch = Math.floor(offsetY / pitchHeight);
 
-        // Draw pitch labels
-        ctx.fillStyle = isDark ? '#e0e0e0' : '#333';
-        ctx.font = '16px "Roboto Mono"';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        for (let p = 0; p < keyNames.length; p++) {
-            const y = p * pitchHeight - offsetY % pitchHeight;
-            const noteIndex = keyNames.length - 1 - p;
-            if (y >= -pitchHeight && y <= canvas.height) {
-                ctx.fillText(showOctaveLabels ? keyNames[noteIndex] : keyNames[noteIndex].replace(/[0-9]/g, ''), labelWidth / 2, y + pitchHeight / 2);
-            }
+    const gradients = {};
+    const createGradient = (x, y, w, h, color) => {
+        const key = `${color}_${x}_${y}_${w}_${h}`;
+        if (!gradients[key]) {
+            const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
+            gradient.addColorStop(0, color);
+            gradient.addColorStop(0.5, lightenColor(color, 0.2));
+            gradient.addColorStop(1, darkenColor(color, 0.7));
+            gradients[key] = gradient;
         }
+        return gradients[key];
+    };
 
-        // Draw horizontal grid lines
-        ctx.strokeStyle = isDark ? '#424242' : '#ccc';
-        ctx.lineWidth = 2;
-        for (let p = 0; p <= keyNames.length; p++) {
-            const y = p * pitchHeight - offsetY % pitchHeight;
-            if (y >= -pitchHeight && y <= canvas.height) {
-                ctx.beginPath();
-                ctx.moveTo(labelWidth, y);
-                ctx.lineTo(canvas.width, y);
-                ctx.stroke();
-            }
+    ctx.clearRect(labelWidth, 0, canvas.width - labelWidth, canvas.height);
+
+    ctx.fillStyle = isDark ? '#e0e0e0' : '#333';
+    ctx.font = 'bold 14px "Roboto Mono"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let p = 0; p < keyNames.length; p++) {
+        const y = p * pitchHeight - offsetY % pitchHeight;
+        const noteIndex = keyNames.length - 1 - p;
+        if (y >= -pitchHeight && y <= canvas.height) {
+            const labelText = showOctaveLabels ? keyNames[noteIndex] : keyNames[noteIndex].replace(/[0-9]/g, '');
+            ctx.fillText(labelText, labelWidth / 2, y + pitchHeight / 2);
         }
+    }
 
-        // Draw vertical grid lines
-        if (showGrid) {
-            for (let t = 0; t < 200; t++) {
-                const absTick = startTick + t;
-                const x = labelWidth + (t * tickWidth) - (offsetX % tickWidth);
-                if (x >= labelWidth - tickWidth && x <= canvas.width) {
-                    let lineWidth = absTick % (song.timeSignature * 4) === 0 ? 2.5 : absTick % gridSnap === 0 ? 1.5 : 1;
-                    ctx.lineWidth = lineWidth;
-                    ctx.beginPath();
-                    ctx.moveTo(x, 0);
-                    ctx.lineTo(x, canvas.height);
-                    ctx.stroke();
-
-                    if (absTick % (song.timeSignature * 4) === 0) {
-                        ctx.fillStyle = isDark ? '#aaa' : '#555';
-                        ctx.font = '12px "Roboto Mono"';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'top';
-                        ctx.fillText(absTick.toString(), x, 5);
-                    }
-                }
-            }
-        }
-
-        // Draw loop markers
-        if (loopEnabled) {
-            const startX = labelWidth + (song.loop.startTick - startTick) * tickWidth - offsetX % tickWidth;
-            const endX = labelWidth + (song.loop.endTick - startTick) * tickWidth - offsetX % tickWidth;
-            document.getElementById('loop-start').style.left = `${startX}px`;
-            document.getElementById('loop-end').style.left = `${endX}px`;
-            document.getElementById('loop-start').style.display = 'block';
-            document.getElementById('loop-end').style.display = 'block';
-        } else {
-            document.getElementById('loop-start').style.display = 'none';
-            document.getElementById('loop-end').style.display = 'none';
-        }
-
-            // Draw automation curve
-            const layer = song.layersData[currentLayer];
-        if (layer.automation.enabled) {
-            const points = layer.automation.points.sort((a, b) => a.tick - b.tick);
-            ctx.strokeStyle = '#FFEB3B';
-            ctx.lineWidth = 2;
+    ctx.strokeStyle = isDark ? '#424242' : '#e0e0e0';
+    ctx.lineWidth = 1.5;
+    for (let p = 0; p <= keyNames.length; p++) {
+        const y = p * pitchHeight - offsetY % pitchHeight;
+        if (y >= -pitchHeight && y <= canvas.height) {
             ctx.beginPath();
-            points.forEach((p, j) => {
-                const x = labelWidth + (p.tick - startTick) * tickWidth - offsetX % tickWidth;
-                const y = canvas.height - (p.vol / 100 * canvas.height / 2) - offsetY;
-                if (j === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            });
+            ctx.moveTo(labelWidth, y);
+            ctx.lineTo(canvas.width, y);
             ctx.stroke();
         }
+    }
 
-        // Preload images
-        const imageCache = {};
-        Object.keys(instrumentImages).forEach(key => {
+    if (showGrid) {
+        ctx.strokeStyle = isDark ? '#616161' : '#bdbdbd';
+        for (let t = 0; t < visibleTicks; t++) {
+            const absTick = startTick + t;
+            const x = labelWidth + (t * tickWidth) - (offsetX % tickWidth);
+            if (x >= labelWidth - tickWidth && x <= canvas.width) {
+                ctx.lineWidth = absTick % (song.timeSignature * 4) === 0 ? 2 : absTick % gridSnap === 0 ? 1.5 : 1;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+
+                if (absTick % (song.timeSignature * 4) === 0) {
+                    ctx.fillStyle = isDark ? '#aaa' : '#555';
+                    ctx.font = '12px "Roboto Mono"';
+                    ctx.fillText(absTick.toString(), x, 5);
+                }
+            }
+        }
+    }
+
+    if (loopEnabled && song.loop) {
+        const startX = labelWidth + (song.loop.startTick - startTick) * tickWidth - offsetX % tickWidth;
+        const endX = labelWidth + (song.loop.endTick - startTick) * tickWidth - offsetX % tickWidth;
+        const loopStartEl = document.getElementById('loop-start');
+        const loopEndEl = document.getElementById('loop-end');
+        if (loopStartEl && loopEndEl) {
+            loopStartEl.style.left = `${Math.max(labelWidth, startX)}px`;
+            loopEndEl.style.left = `${Math.max(labelWidth, endX)}px`;
+            loopStartEl.style.display = 'block';
+            loopEndEl.style.display = 'block';
+        }
+    } else {
+        const loopStartEl = document.getElementById('loop-start');
+        const loopEndEl = document.getElementById('loop-end');
+        if (loopStartEl && loopEndEl) {
+            loopStartEl.style.display = 'none';
+            loopEndEl.style.display = 'none';
+        }
+    }
+
+    if (!song.layersData || song.layersData.length === 0) {
+        console.warn('No layers to draw in piano roll. Adding default layer.');
+        song.layersData = [{
+            name: 'Layer 1',
+            volume: 100,
+            pan: 100,
+            locked: false,
+            mute: false,
+            solo: false,
+            instrument: 0,
+            customSound: null,
+            pressKey: 36,
+            automation: { enabled: false, points: [] },
+            notes: []
+        }];
+        song.layers = 1;
+        updateLayersPanel();
+    }
+
+    if (currentLayer < 0 || currentLayer >= song.layersData.length) {
+        console.warn('Invalid currentLayer:', currentLayer, 'Resetting to 0');
+        currentLayer = 0;
+    }
+
+    const layer = song.layersData[currentLayer];
+    if (layer && layer.automation && layer.automation.enabled) {
+        const points = layer.automation.points.sort((a, b) => a.tick - b.tick);
+        ctx.strokeStyle = '#FFEB3B';
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        points.forEach((p, j) => {
+            if (!p || p.tick === undefined || p.vol === undefined) return;
+            const x = labelWidth + (p.tick - startTick) * tickWidth - offsetX % tickWidth;
+            const y = canvas.height - (p.vol / 100 * canvas.height / 2) - offsetY;
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    }
+
+    const imageCache = {};
+    Object.keys(instrumentImages).forEach(key => {
+        if (!imageCache[key]) {
             imageCache[key] = new Image();
             imageCache[key].src = instrumentImages[key];
-        });
+        }
+    });
 
-        // Draw notes
-        song.layersData.slice(0, song.layers).forEach((layer, l) => {
-            if (layer.locked) return;
-            layer.notes.forEach(note => {
-                if (note.tick + note.duration > startTick && note.tick < startTick + visibleTicks) {
-                    const x = labelWidth + (note.tick - startTick) * tickWidth - offsetX % tickWidth;
-                    const y = (keyNames.length - 1 - note.pitch) * pitchHeight - offsetY % pitchHeight;
-                    const w = tickWidth * note.duration * 0.8;
-                    const h = pitchHeight * 0.8;
-                    if (x >= labelWidth - tickWidth && x <= canvas.width && y >= -pitchHeight && y <= canvas.height) {
-                        const isSelected = selectedNotes.some(s => s.layer === l && s.tick === note.tick && s.pitch === pitch);
-                        const instIdx = layer.instrument >= instruments.length ? 16 : layer.instrument;
-                        // Draw note with instrument-specific gradient
-                        const gradient = ctx.createLinearGradient(x, y, x + w, y + h);
-                        gradient.addColorStop(0, isSelected ? '#FF9800' : instrumentColors[instIdx]);
-                        gradient.addColorStop(1, isSelected ? '#F57C00' : darkenColor(instrumentColors[instIdx], 0.8));
-                        ctx.fillStyle = gradient;
-                        ctx.fillRect(x, y, w, h);
-                        // Draw velocity bar
-                        ctx.fillStyle = isDark ? '#2E7D32' : '#1B5E20';
-                        ctx.fillRect(x, y + h * (1 - (note.velocity || 100) / 100), w, h * ((note.velocity || 100) / 100));
-                        // Add border and shadow
-                        ctx.strokeStyle = '#64b5f6';
-                        ctx.lineWidth = 2;
-                        ctx.strokeRect(x, y, w, h);
-                        // Draw instrument image in center
-                        const img = imageCache[instIdx];
-                        if (img && img.complete && img.naturalWidth !== 0) {
-                            const imgSize = Math.min(w, h) * 0.4;
-                            const imgX = x + (w - imgSize) / 2;
-                            const imgY = y + (h - imgSize) / 2;
-                            ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-                        }
-                        // Draw layer number in top-right corner
-                        ctx.fillStyle = isDark ? '#FFFFFF' : '#000000';
-                        ctx.font = `${Math.min(w, h) * 0.25}px 'Roboto Mono'`;
-                        ctx.textAlign = 'right';
-                        ctx.textBaseline = 'top';
-                        ctx.fillText((l + 1).toString(), x + w - 4, y + 4);
-                        // Add playing class for animation if playing
-                        if (isPlaying && parseInt(document.getElementById('current-tick').textContent) === note.tick) {
-                            ctx.canvas.classList.add('playing');
-                            setTimeout(() => ctx.canvas.classList.remove('playing'), 500);
-                        }
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+    ctx.shadowBlur = 3;
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 1;
+
+    const currentTick = isPlaying ? parseInt(document.getElementById('current-tick').textContent) || 0 : -1;
+
+    song.layersData.slice(0, song.layers).forEach((layer, l) => {
+        if (!layer || !layer.notes || !layer.automation) {
+            console.warn('Invalid layer at index', l);
+            return;
+        }
+        if (layer.locked) return;
+        layer.notes.forEach(note => {
+            if (!note || note.tick === undefined || note.pitch === undefined) return;
+            if (note.tick + (note.duration || 1) > startTick && note.tick < startTick + visibleTicks) {
+                const x = labelWidth + (note.tick - startTick) * tickWidth - offsetX % tickWidth;
+                const y = (keyNames.length - 1 - note.pitch) * pitchHeight - offsetY % pitchHeight;
+                const w = tickWidth * (note.duration || 1) * 0.85;
+                const h = pitchHeight * 0.85;
+                if (x >= labelWidth - tickWidth && x <= canvas.width && y >= -pitchHeight && y <= canvas.height) {
+                    const isSelected = selectedNotes.some(s => s.layer === l && s.tick === note.tick && s.pitch === note.pitch);
+                    const isPlayingNote = isPlaying && currentTick >= note.tick && currentTick < note.tick + (note.duration || 1);
+                    const instIdx = layer.instrument >= instruments.length ? 16 : layer.instrument;
+
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+
+                    ctx.fillStyle = createGradient(x, y, w, h, isSelected ? '#FF9800' : instrumentColors[instIdx]);
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, w, h, 10);
+                    ctx.fill();
+
+                    ctx.shadowBlur = isPlayingNote ? 10 : 4;
+                    ctx.shadowColor = isPlayingNote ? 'rgba(255, 152, 0, 0.7)' : 'rgba(66, 165, 245, 0.4)';
+                    ctx.shadowOffsetX = isPlayingNote ? 0 : 1;
+                    ctx.shadowOffsetY = isPlayingNote ? 0 : 1;
+
+                    const borderGradient = ctx.createLinearGradient(x, y, x + w, y + h);
+                    const borderStart = isPlayingNote ? '#ff6f00' : (isSelected ? '#ff9800' : '#42a5f5');
+                    const borderEnd = isPlayingNote ? '#e65100' : (isSelected ? '#f57c00' : '#1976d2');
+                    borderGradient.addColorStop(0, borderStart);
+                    borderGradient.addColorStop(1, borderEnd);
+                    ctx.strokeStyle = borderGradient;
+                    ctx.lineWidth = isPlayingNote ? 3 : 2.5;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.stroke();
+
+                    const velHeight = h * ((note.velocity || 100) / 100);
+                    if (velHeight > 0) {
+                        const velGradient = ctx.createLinearGradient(x, y + h - velHeight, x, y + h);
+                        velGradient.addColorStop(0, '#4caf50');
+                        velGradient.addColorStop(1, '#2e7d32');
+                        ctx.fillStyle = velGradient;
+                        ctx.fillRect(x + 2, y + h - velHeight, w - 4, velHeight);
                     }
-                }
-            });
-        });
 
-        // Draw playback head
-        if (isPlaying) {
-            const x = labelWidth + (parseInt(document.getElementById('current-tick').textContent) * tickWidth) - offsetX;
+                    const img = imageCache[instIdx];
+                    if (img && img.complete && img.naturalWidth !== 0 && w > 20 && h > 20) {
+                        const imgSize = Math.min(w * 0.6, h * 0.6, 24);
+                        const imgX = x + (w - imgSize) / 2;
+                        const imgY = y + (h - imgSize) / 2;
+                        ctx.shadowBlur = 2;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                        ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+                        ctx.shadowBlur = 0;
+                    }
+
+                    ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.7)';
+                    ctx.font = `${Math.min(w, h) * 0.2}px 'Roboto Mono' bold`;
+                    ctx.textAlign = 'right';
+                    ctx.textBaseline = 'top';
+                    ctx.fillText((l + 1).toString(), x + w - 3, y + 3);
+
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                }
+            }
+        });
+    });
+
+    if (isPlaying) {
+        const currentTickValue = parseInt(document.getElementById('current-tick').textContent) || 0;
+        const x = labelWidth + (currentTickValue * tickWidth) - offsetX;
+        if (x >= labelWidth && x <= canvas.width) {
             ctx.strokeStyle = '#e91e63';
             ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
             ctx.beginPath();
             ctx.moveTo(x, 0);
             ctx.lineTo(x, canvas.height);
             ctx.stroke();
+
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = 'rgba(233, 30, 99, 0.6)';
+            ctx.strokeStyle = '#e91e63';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
         }
     }
+}
 
     // Helper function to darken a color for gradient
-    function darkenColor(color, factor) {
-        const hex = color.replace('#', '');
-        const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) * factor));
-        const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) * factor));
-        const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) * factor));
-        return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
-    }
+   function darkenColor(color, factor) {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) * factor));
+    const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) * factor));
+    const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) * factor));
+    return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
+}
+// Helper function to lighten a color (baru, untuk gradient yang lebih halus)
+function lightenColor(color, factor) {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + (255 - parseInt(hex.substr(0, 2), 16)) * factor));
+    const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + (255 - parseInt(hex.substr(2, 2), 16)) * factor));
+    const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + (255 - parseInt(hex.substr(4, 2), 16)) * factor));
+    return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
+}
+
 
         function drawPianoKeys() {
             const keysDiv = document.getElementById('piano-keys');
@@ -1542,26 +1769,57 @@
 
         let touchId = null;
         canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const touch = e.touches[0];
-            touchId = touch.identifier;
-            const mouseEvent = new MouseEvent('mousedown', {clientX: touch.clientX, clientY: touch.clientY});
+    e.preventDefault();
+    if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        touchId = touch.identifier;
+        const mouseEvent = new MouseEvent('mousedown', {clientX: touch.clientX, clientY: touch.clientY});
+        canvas.dispatchEvent(mouseEvent);
+    } else if (e.touches.length === 2) {
+        // Handle pinch-to-zoom
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const distance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+        touchId = null; // Nonaktifkan drag saat pinch
+        window.lastPinchDistance = distance;
+    }
+}, {passive: false});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && touchId !== null) {
+        const touch = Array.from(e.touches).find(t => t.identifier === touchId);
+        if (touch) {
+            const mouseEvent = new MouseEvent('mousemove', {clientX: touch.clientX, clientY: touch.clientY});
             canvas.dispatchEvent(mouseEvent);
-        }, {passive: false});
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const touch = Array.from(e.touches).find(t => t.identifier === touchId);
-            if (touch) {
-                const mouseEvent = new MouseEvent('mousemove', {clientX: touch.clientX, clientY: touch.clientY});
-                canvas.dispatchEvent(mouseEvent);
-            }
-        }, {passive: false});
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            const mouseEvent = new MouseEvent('mouseup', {});
-            canvas.dispatchEvent(mouseEvent);
-            touchId = null;
-        }, {passive: false});
+        }
+    } else if (e.touches.length === 2) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const distance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+        if (window.lastPinchDistance) {
+            const delta = distance / window.lastPinchDistance;
+            zoom *= delta;
+            zoom = Math.max(0.5, Math.min(zoom, 5));
+            offsetX *= delta;
+            offsetY *= delta;
+            drawPianoRoll();
+        }
+        window.lastPinchDistance = distance;
+    }
+}, {passive: false});
+
+canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (e.touches.length < 2) {
+        window.lastPinchDistance = null;
+    }
+    if (touchId !== null) {
+        const mouseEvent = new MouseEvent('mouseup', {});
+        canvas.dispatchEvent(mouseEvent);
+        touchId = null;
+    }
+}, {passive: false});
 
         function getMousePos(e) {
             const rect = canvas.getBoundingClientRect();
@@ -1712,24 +1970,67 @@ function showNoteProperties() {
             document.getElementById('dur-val').textContent = note.duration;
             document.getElementById('note-properties').style.display = 'block';
         }
+    } else {
+        document.getElementById('note-properties').style.display = 'none';
     }
 }
 
 function applyNoteProps() {
-            const {layer, tick, pitch} = window.currentNoteProps;
-            const note = song.layersData[layer].notes.find(n => n.tick === tick && n.pitch === pitch);
-            if (note) {
-                note.velocity = parseInt(document.getElementById('note-vel').value);
-                note.pan = parseInt(document.getElementById('note-pan').value);
-                note.fade = parseInt(document.getElementById('note-fade').value);
-                note.duration = parseInt(document.getElementById('note-dur').value);
-                saveHistory();
-                drawPianoRoll();
-            }
-            closeDialog('note-properties');
-        }
+    if (editingNote === null || editingLayerIndex === null || editingNoteIndex === null) {
+        console.error('No note selected for editing');
+        return;
+    }
 
-        function closeDialog(id) { document.getElementById(id).style.display = 'none'; }
+    // Ambil nilai dari slider
+    const velocity = parseInt(document.getElementById('note-vel').value) || 100;
+    const pan = parseInt(document.getElementById('note-pan').value) || 100;
+    const fade = parseInt(document.getElementById('note-fade').value) || 0;
+    const duration = parseInt(document.getElementById('note-dur').value) || 1;
+
+    // Validasi nilai sesuai range di HTML
+    editingNote.velocity = Math.max(0, Math.min(velocity, 100));
+    editingNote.pan = Math.max(0, Math.min(pan, 200));
+    editingNote.fade = Math.max(0, Math.min(fade, 100));
+    editingNote.duration = Math.max(1, Math.min(duration, 16));
+
+    // Update note di song.layersData
+    song.layersData[editingLayerIndex].notes[editingNoteIndex] = editingNote;
+    console.log('Updated note:', editingNote);
+
+    // Update piano roll dan simpan history
+    drawPianoRoll();
+    saveHistory();
+
+    // Tutup panel
+    closeDialog('note-properties');
+}
+
+
+
+        // Tutup modal atau panel
+function closeNoteSelector() {
+    editingLayerIndex = null;
+    document.getElementById('note-selector-modal').style.display = 'none';
+    document.getElementById('modal-backdrop').style.display = 'none';
+    console.log('Note selector closed');
+}
+
+function closeDialog(id) {
+    if (id === 'note-properties') {
+        editingNote = null;
+        editingLayerIndex = null;
+        editingNoteIndex = null;
+    }
+    document.getElementById(id).style.display = 'none';
+    document.getElementById('modal-backdrop').style.display = 'none';
+    console.log(`${id} closed`);
+}
+
+// Panggil setup setelah DOM loaded
+document.addEventListener('DOMContentLoaded', () => {
+    updateLayersPanel();
+    setupSliderListeners();
+});
 
         function zoomHandler(e) {
             e.preventDefault();
@@ -1795,6 +2096,7 @@ function applyNoteProps() {
             clearSelection();
             saveHistory();
             drawPianoRoll();
+            updateSongLength();
         }
 
         function copy() {
@@ -1818,7 +2120,17 @@ function applyNoteProps() {
             clearSelection();
             saveHistory();
             drawPianoRoll();
+            updateSongLength();
+            
         }
+
+        function updateSongLength() {
+    song.length = Math.max(
+        ...song.layersData.map(l => l.notes.length ? Math.max(...l.notes.map(n => n.tick + n.duration)) + 1 : 0),
+        1
+    );
+    document.getElementById('song-length').textContent = song.length;
+}
 
         function saveHistory() {
             history = history.slice(0, historyIndex + 1);
@@ -1847,195 +2159,820 @@ function applyNoteProps() {
             }
         }
 
-        function openFile() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.nbs';
-            input.onchange = e => loadNBS(e.target.files[0]);
-            input.click();
+        function readString(view, offset) {
+    const length = view.getUint32(offset, true);
+    offset += 4;
+    const bytes = new Uint8Array(view.buffer, offset, length);
+    const str = new TextDecoder().decode(bytes);
+    return [str, offset + length];
+}
+
+function openFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.nbs';
+    input.onchange = (e) => {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            if (!file.name.toLowerCase().endsWith('.nbs')) {
+                alert('Please select a valid .nbs file');
+                return;
+            }
+            console.log('Loading file:', file.name, 'Size:', file.size, 'bytes');
+            loadNBS(file);
+        }
+    };
+    input.click();
+}
+
+function openNoteSelector(layerIndex) {
+    if (!song.layersData[layerIndex]) {
+        console.error('Invalid layer index:', layerIndex);
+        return;
+    }
+
+    editingLayerIndex = layerIndex;
+    const layer = song.layersData[layerIndex];
+    const noteSelector = document.getElementById('note-selector');
+    if (!noteSelector) {
+        console.error('Note selector not found');
+        return;
+    }
+
+    // Isi dropdown dengan notes
+    noteSelector.innerHTML = '<option value="">Pilih note</option>';
+    layer.notes.forEach((note, noteIndex) => {
+        const option = document.createElement('option');
+        option.value = noteIndex;
+        option.text = `Tick ${note.tick}, Pitch ${note.pitch}`;
+        noteSelector.appendChild(option);
+    });
+
+    // Tampilin modal
+    document.getElementById('note-selector-modal').style.display = 'block';
+    document.getElementById('modal-backdrop').style.display = 'block';
+    console.log('Opened note selector for layer:', layerIndex, 'notes:', layer.notes.length);
+}
+
+// Buka panel note properties
+function openNoteProperties() {
+    const noteIndex = parseInt(document.getElementById('note-selector').value);
+    if (isNaN(noteIndex) || !song.layersData[editingLayerIndex].notes[noteIndex]) {
+        console.error('Invalid note selected');
+        return;
+    }
+
+    editingNoteIndex = noteIndex;
+    editingNote = song.layersData[editingLayerIndex].notes[noteIndex];
+
+    // Isi slider di note-properties
+    document.getElementById('note-vel').value = editingNote.velocity || 100;
+    document.getElementById('vel-val').textContent = editingNote.velocity || 100;
+    document.getElementById('note-pan').value = editingNote.pan || 100;
+    document.getElementById('pan-val').textContent = editingNote.pan || 100;
+    document.getElementById('note-fade').value = editingNote.fade || 0;
+    document.getElementById('fade-val').textContent = editingNote.fade || 0;
+    document.getElementById('note-dur').value = editingNote.duration || 1;
+    document.getElementById('dur-val').textContent = editingNote.duration || 1;
+
+    // Tutup note selector, buka note-properties
+    document.getElementById('note-selector-modal').style.display = 'none';
+    document.getElementById('note-properties').style.display = 'block';
+    console.log('Opened note properties for layer:', editingLayerIndex, 'note:', editingNote);
+}
+
+// Update nilai span saat slider berubah
+function setupSliderListeners() {
+    const sliders = ['note-vel', 'note-pan', 'note-fade', 'note-dur'];
+    sliders.forEach(sliderId => {
+        const slider = document.getElementById(sliderId);
+        const span = document.getElementById(sliderId.replace('note-', '') + '-val');
+        if (slider && span) {
+            slider.addEventListener('input', () => {
+                span.textContent = slider.value;
+            });
+        }
+    });
+}
+
+
+// Fungsi buat tutup modal
+function closeNoteEditor() {
+    editingNote = null;
+    editingLayerIndex = null;
+    document.getElementById('note-editor-modal').style.display = 'none';
+    document.getElementById('modal-backdrop').style.display = 'none';
+}
+
+async function loadNBS(file) {
+    try {
+        console.log('Loading NBS file:', file.name, 'Size:', file.size, 'bytes');
+        const buffer = await file.arrayBuffer();
+        if (buffer.byteLength < 20) throw new Error('File too small to be a valid NBS file');
+        const view = new DataView(buffer);
+        let offset = 0;
+
+        // Log first 20 bytes for debugging
+        console.log('First 20 bytes:', Array.from(new Uint8Array(buffer.slice(0, 20)))
+            .map(b => b.toString(16).padStart(2, '0')).join(' '));
+
+        // Read NBS version
+        const version = view.getUint16(offset, true);
+        offset += 2;
+        if (version < 4 || version > 5) throw new Error(`Unsupported NBS version: ${version}`);
+        song.version = version;
+        console.log('NBS Version:', version);
+
+        // Read vanilla instrument count
+        song.vanillaInstrumentCount = view.getUint8(offset++);
+        console.log('Vanilla Instrument Count:', song.vanillaInstrumentCount);
+
+        // Read song length
+        song.length = view.getUint16(offset, true);
+        offset += 2;
+        console.log('Song Length:', song.length);
+
+        // Read initial layer count
+        let layerCount = view.getUint16(offset, true);
+        offset += 2;
+        if (layerCount > 100 || layerCount < 0) {
+            console.warn(`Invalid initial layer count: ${layerCount}. Setting to 1`);
+            layerCount = 1;
+        }
+        console.log('Initial Layer Count:', layerCount);
+
+        // Read song metadata
+        [song.title, offset] = readString(view, offset);
+        console.log('Title:', song.title);
+        [song.author, offset] = readString(view, offset);
+        console.log('Author:', song.author);
+        if (version >= 4) {
+            [song.originalAuthor, offset] = readString(view, offset);
+            console.log('Original Author:', song.originalAuthor);
+        } else {
+            song.originalAuthor = '';
+        }
+        [song.description, offset] = readString(view, offset);
+        console.log('Description:', song.description);
+
+        // Read additional metadata
+        if (offset + 11 > buffer.byteLength) throw new Error('Unexpected end of file during metadata');
+        song.tempo = view.getUint16(offset, true);
+        offset += 2;
+        console.log('Tempo:', song.tempo);
+        song.autosave = view.getUint8(offset++);
+        console.log('Autosave:', song.autosave);
+        song.autosaveDuration = view.getUint8(offset++);
+        console.log('Autosave Duration:', song.autosaveDuration);
+        song.timeSignature = view.getUint8(offset++) || 4;
+        console.log('Time Signature:', song.timeSignature);
+        song.minutesSpent = view.getUint32(offset, true);
+        offset += 4;
+        console.log('Minutes Spent:', song.minutesSpent);
+        song.leftClicks = view.getUint32(offset, true);
+        offset += 4;
+        console.log('Left Clicks:', song.leftClicks);
+        song.rightClicks = view.getUint32(offset, true);
+        offset += 4;
+        console.log('Right Clicks:', song.rightClicks);
+        song.blocksAdded = view.getUint32(offset, true);
+        offset += 4;
+        console.log('Blocks Added:', song.blocksAdded);
+        song.blocksRemoved = view.getUint32(offset, true);
+        offset += 4;
+        console.log('Blocks Removed:', song.blocksRemoved);
+        [song.midiFilename, offset] = readString(view, offset);
+        console.log('MIDI Filename:', song.midiFilename);
+
+        // Read loop data (NBS v4+)
+        if (version >= 4) {
+            if (offset + 6 > buffer.byteLength) throw new Error('Unexpected end of file during loop data');
+            song.loop = {
+                enabled: view.getUint8(offset++) !== 0,
+                maxCount: view.getUint16(offset, true),
+                startTick: view.getUint16(offset + 2, true),
+                endTick: view.getUint16(offset + 4, true)
+            };
+            offset += 6;
+            console.log('Loop Data:', song.loop);
+        } else {
+            song.loop = { enabled: false, maxCount: 0, startTick: 0, endTick: 0 };
         }
 
-        async function loadNBS(file) {
-            try {
-                const buffer = await file.arrayBuffer();
-                const view = new DataView(buffer);
-                let offset = 0;
+        // Read layer count (second read)
+        if (offset + 2 > buffer.byteLength) {
+            console.warn('Unexpected end of file at layer count section. Using initial count:', layerCount);
+        } else {
+            const newLayerCount = view.getUint16(offset, true);
+            offset += 2;
+            if (newLayerCount > 100 || newLayerCount < 0) {
+                console.warn(`Invalid layer count: ${newLayerCount}. Using initial count: ${layerCount}`);
+            } else {
+                layerCount = newLayerCount;
+            }
+            console.log('Layer Count (Layer Section):', layerCount);
+        }
 
-                const version = view.getUint16(offset, false); offset += 2;
-                if (version !== 4 && version !== 5) throw new Error('Invalid NBS version');
-                song.version = version;
+        // Parse layers
+        song.layersData = [];
+        for (let i = 0; i < layerCount; i++) {
+            if (offset >= buffer.byteLength) {
+                console.warn('Unexpected end of file while parsing layer', i);
+                break;
+            }
+            const [name, newOffset] = readString(view, offset);
+            offset = newOffset;
+            const layer = {
+                name: name || `Layer ${i + 1}`,
+                volume: offset < buffer.byteLength ? Math.min(view.getUint8(offset++), 100) : 100,
+                pan: version >= 4 && offset < buffer.byteLength ? view.getUint8(offset++) : 100,
+                locked: offset < buffer.byteLength ? view.getUint8(offset++) !== 0 : false,
+                mute: offset < buffer.byteLength ? view.getUint8(offset++) !== 0 : false,
+                solo: offset < buffer.byteLength ? view.getUint8(offset++) !== 0 : false,
+                instrument: offset < buffer.byteLength ? view.getUint8(offset++) : 0,
+                customSound: null,
+                pressKey: 36 + i * 2,
+                automation: { enabled: false, points: [] },
+                notes: []
+            };
+            console.log(`Parsed Layer ${i + 1}:`, layer);
+            song.layersData.push(layer);
+        }
 
-                song.vanillaInstrumentCount = view.getUint8(offset++); 
-                song.length = view.getUint16(offset, false); offset += 2; 
-                song.layers = view.getUint16(offset, false); offset += 2;
+        // Ensure at least one layer
+        if (song.layersData.length === 0) {
+            console.warn('No layers parsed. Adding default layer.');
+            song.layersData.push({
+                name: 'Layer 1',
+                volume: 100,
+                pan: 100,
+                locked: false,
+                mute: false,
+                solo: false,
+                instrument: 0,
+                customSound: null,
+                pressKey: 36,
+                automation: { enabled: false, points: [] },
+                notes: []
+            });
+            layerCount = 1;
+        }
 
-                function readString() {
-                    const len = view.getUint32(offset, false); offset += 4;
-                    const str = new TextDecoder('utf-8').decode(new Uint8Array(buffer.slice(offset, offset + len)));
-                    offset += len;
-                    return str;
+        // Read notes
+        if (offset + 2 > buffer.byteLength) {
+            console.warn('Unexpected end of file before note count');
+        } else {
+            const noteCount = view.getUint16(offset, true);
+            offset += 2;
+            console.log('Note Count:', noteCount);
+            for (let i = 0; i < noteCount; i++) {
+                if (offset + (version >= 4 ? 9 : 7) > buffer.byteLength) {
+                    console.warn('Unexpected end of file while parsing note', i);
+                    break;
                 }
-                song.title = readString();
-                song.author = readString();
-                if (version >= 4) song.originalAuthor = readString();
-                song.description = readString();
-
-                song.tempo = view.getUint16(offset, false); offset += 2;
-                song.autosave = view.getUint8(offset++); 
-                song.autosaveDuration = view.getUint8(offset++);
-                song.timeSignature = view.getUint8(offset++);
-                song.minutesSpent = view.getUint32(offset, false); offset += 4;
-                song.leftClicks = view.getUint32(offset, false); offset += 4;
-                song.rightClicks = view.getUint32(offset, false); offset += 4;
-                song.blocksAdded = view.getUint32(offset, false); offset += 4;
-                song.blocksRemoved = view.getUint32(offset, false); offset += 4;
+                const tick = view.getUint32(offset, true);
+                offset += 4;
+                const layer = view.getUint8(offset++);
+                const pitch = view.getUint8(offset++);
+                const velocity = view.getUint8(offset++);
+                let pan = 100;
+                let fade = 0;
+                let duration = 1;
                 if (version >= 4) {
-                    song.midiFilename = readString();
-                    song.loop = {
-                        enabled: view.getUint8(offset++) !== 0,
-                        maxCount: view.getUint16(offset, false),
-                        startTick: view.getUint16(offset + 2, false),
-                        endTick: view.getUint16(offset + 4, false)
-                    };
-                    offset += 6;
+                    pan = view.getUint8(offset++);
+                    fade = view.getUint8(offset++);
+                    duration = view.getUint16(offset, true);
+                    offset += 2;
                 }
+                if (layer < song.layersData.length) {
+                    song.layersData[layer].notes.push({ tick, pitch, velocity, pan, fade, duration });
+                    console.log(`Note ${i + 1}: Layer ${layer}, Tick ${tick}, Pitch ${pitch}, Velocity ${velocity}, Pan ${pan}, Fade ${fade}, Duration ${duration}`);
+                } else {
+                    console.warn(`Skipping note ${i + 1}: Invalid layer index ${layer}`);
+                }
+            }
+        }
 
-                const layerCount = view.getUint16(offset, false); offset += 2;
-                song.layersData = Array(Math.min(layerCount, 16)).fill().map(() => ({
-                    name: readString(),
-                    volume: view.getUint8(offset++),
-                    pan: view.getUint8(offset++),
-                    locked: view.getUint8(offset++) !== 0,
-                    mute: view.getUint8(offset++) !== 0,
-                    solo: view.getUint8(offset++) !== 0,
-                    instrument: view.getUint8(offset++),
+        // Finalize song data
+        song.layersData.forEach(l => l.notes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch));
+        song.length = Math.max(...song.layersData.map(l => l.notes.length ? Math.max(...l.notes.map(n => n.tick + (n.duration || 1))) + 1 : 0), 1);
+        song.layers = song.layersData.length;
+        currentLayer = Math.max(0, Math.min(currentLayer, song.layersData.length - 1));
+        loopEnabled = song.loop.enabled;
+
+        console.log('Final Song Data:', {
+            length: song.length,
+            layers: song.layers,
+            layersData: song.layersData.map((l, i) => ({
+                index: i,
+                name: l.name,
+                notesCount: l.notes.length
+            }))
+        });
+
+        updateLayersPanel();
+        drawPianoRoll();
+        saveHistory();
+        document.getElementById('tempo').value = song.tempo / 100;
+        document.getElementById('song-title').value = song.title;
+        document.getElementById('song-author').value = song.author;
+        document.getElementById('song-desc').value = song.description;
+        alert(`Loaded: ${song.title} (${song.length} ticks, ${song.layers} layers)`);
+    } catch (err) {
+        console.error('NBS load error:', err);
+        alert(`Error loading NBS file: ${err.message}\n\nDebug info:\nFile size: ${buffer ? buffer.byteLength : 'Unknown'} bytes\nVersion: ${song.version || 'Unknown'}`);
+        // Reset to default state
+        song = {
+            version: 5,
+            vanillaInstrumentCount: 16,
+            length: 1,
+            layers: 1,
+            title: 'Untitled',
+            author: '',
+            originalAuthor: '',
+            description: '',
+            tempo: 12000,
+            autosave: 0,
+            autosaveDuration: 0,
+            timeSignature: 4,
+            minutesSpent: 0,
+            leftClicks: 0,
+            rightClicks: 0,
+            blocksAdded: 0,
+            blocksRemoved: 0,
+            midiFilename: '',
+            loop: { enabled: false, maxCount: 0, startTick: 0, endTick: 0 },
+            masterVolume: 150,
+            layersData: [{
+                name: 'Layer 1',
+                volume: 100,
+                pan: 100,
+                locked: false,
+                mute: false,
+                solo: false,
+                instrument: 0,
+                customSound: null,
+                pressKey: 36,
+                automation: { enabled: false, points: [] },
+                notes: []
+            }]
+        };
+        currentLayer = 0;
+        loopEnabled = false;
+        updateLayersPanel();
+        drawPianoRoll();
+        saveHistory();
+    }
+}
+
+
+        function saveFile() {
+    try {
+        // Validasi song state
+        if (!song || !song.layersData) {
+            console.error('Song or layersData is undefined. Initializing default song.');
+            song = {
+                version: 5,
+                vanillaInstrumentCount: 16,
+                length: 1,
+                layers: 1,
+                title: 'Untitled',
+                author: '',
+                originalAuthor: '',
+                description: '',
+                tempo: 12000,
+                autosave: 0,
+                autosaveDuration: 0,
+                timeSignature: 4,
+                minutesSpent: 0,
+                leftClicks: 0,
+                rightClicks: 0,
+                blocksAdded: 0,
+                blocksRemoved: 0,
+                midiFilename: '',
+                loop: { enabled: false, maxCount: 0, startTick: 0, endTick: 0 },
+                masterVolume: 150,
+                layersData: [{
+                    name: 'Layer 1',
+                    volume: 100,
+                    pan: 100,
+                    locked: false,
+                    mute: false,
+                    solo: false,
+                    instrument: 0,
                     customSound: null,
                     pressKey: 36,
                     automation: { enabled: false, points: [] },
                     notes: []
-                }));
-
-                const noteCount = view.getUint16(offset, false); offset += 2;
-                for (let i = 0; i < noteCount; i++) {
-                    const tick = view.getUint32(offset, false); offset += 4;
-                    const layer = view.getUint8(offset++);
-                    const pitch = view.getUint8(offset++);
-                    const velocity = view.getUint8(offset++);
-                    if (version >= 4) {
-                        const pan = view.getUint8(offset++);
-                        const fade = view.getUint8(offset++);
-                        const duration = view.getUint16(offset, false); offset += 2;
-                        if (layer < song.layersData.length) {
-                            song.layersData[layer].notes.push({ tick, pitch, velocity, pan, fade, duration });
-                        }
-                    } else {
-                        if (layer < song.layersData.length) {
-                            song.layersData[layer].notes.push({ tick, pitch, velocity, pan: 100, fade: 0, duration: 1 });
-                        }
-                    }
-                }
-
-                song.layersData.forEach(l => l.notes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch));
-                song.length = Math.max(...song.layersData.map(l => l.notes.length ? Math.max(...l.notes.map(n => n.tick + n.duration)) + 1 : 0), 1);
-                currentLayer = 0;
-                updateLayersPanel();
-                drawPianoRoll();
-                saveHistory();
-                document.getElementById('tempo').value = song.tempo / 100;
-                document.getElementById('song-title').value = song.title;
-                document.getElementById('song-author').value = song.author;
-                document.getElementById('song-desc').value = song.description;
-                alert('Song loaded successfully!');
-            } catch (err) {
-                alert('Error loading NBS: ' + err.message);
-            }
+                }]
+            };
         }
 
-        function saveFile() {
-            const blob = new Blob([saveNBS()], { type: 'application/octet-stream' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${song.title || 'untitled'}.nbs`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+        console.log('Generating NBS data...');
+        saveNBS();
+        song.minutesSpent += Math.floor((Date.now() - startTime) / 60000);
+        startTime = Date.now();
+        song.blocksAdded = Math.max(song.blocksAdded, song.layersData.reduce((sum, layer) => sum + (layer.notes ? layer.notes.length : 0), 0));
+        console.log('Song saved successfully. Minutes spent:', song.minutesSpent, 'Blocks added:', song.blocksAdded);
+    } catch (err) {
+        console.error('Save error:', err);
+        alert(`Error saving file: ${err.message}`);
+    }
+}
 
-        function saveAsFile() {
-            const title = prompt('Save as filename:', song.title || 'untitled');
-            if (title) {
-                song.title = title;
-                saveFile();
-            }
-        }
+
+
+function writeString(view, offset, str) {
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(str || '');
+    view.setUint32(offset, bytes.length, true);
+    offset += 4;
+    for (let i = 0; i < bytes.length; i++) {
+        view.setUint8(offset++, bytes[i]);
+    }
+    return offset;
+}
+
+function saveAsFile() {
+    const filename = prompt('Save as filename (without .nbs):', song.title || 'untitled');
+    if (filename) {
+        song.title = filename;
+        document.getElementById('song-title').value = filename; // Update UI
+        saveFile();
+    }
+}
 
         function saveNBS() {
-            const encoder = new TextEncoder();
-            let data = new Uint8Array(0);
-            const append = (arr) => { const tmp = new Uint8Array(data.length + arr.length); tmp.set(data); tmp.set(arr, data.length); data = tmp; };
-            const appendString = (str) => { const encoded = encoder.encode(str + '\0'); append(new Uint32Array([encoded.length - 1]).buffer); append(encoded); };
+    try {
+        // Validasi song state
+        if (!song || !song.layersData) {
+            console.error('Song or layersData is undefined. Initializing default song.');
+            song = {
+                version: 5,
+                vanillaInstrumentCount: 16,
+                length: 1,
+                layers: 1,
+                title: 'Untitled',
+                author: '',
+                originalAuthor: '',
+                description: '',
+                tempo: 12000,
+                autosave: 0,
+                autosaveDuration: 0,
+                timeSignature: 4,
+                minutesSpent: 0,
+                leftClicks: 0,
+                rightClicks: 0,
+                blocksAdded: 0,
+                blocksRemoved: 0,
+                midiFilename: '',
+                loop: { enabled: false, maxCount: 0, startTick: 0, endTick: 0 },
+                masterVolume: 150,
+                layersData: [{
+                    name: 'Layer 1',
+                    volume: 100,
+                    pan: 100,
+                    locked: false,
+                    mute: false,
+                    solo: false,
+                    instrument: 0,
+                    customSound: null,
+                    pressKey: 36,
+                    automation: { enabled: false, points: [] },
+                    notes: []
+                }]
+            };
+        }
 
-            append(new Uint16Array([song.version]).buffer);
-            append(new Uint8Array([song.vanillaInstrumentCount]).buffer);
-            append(new Uint16Array([song.length]).buffer);
-            append(new Uint16Array([song.layers]).buffer);
+        const buffer = new ArrayBuffer(1024 * 1024); // 1MB buffer
+        const view = new DataView(buffer);
+        let offset = 0;
 
-            appendString(song.title);
-            appendString(song.author);
-            if (song.version >= 4) appendString(song.originalAuthor || '');
-            appendString(song.description);
+        // Write NBS version
+        view.setUint16(offset, song.version || 5, true);
+        offset += 2;
 
-            append(new Uint16Array([song.tempo]).buffer);
-            append(new Uint8Array([song.autosave]).buffer);
-            append(new Uint8Array([song.autosaveDuration]).buffer);
-            append(new Uint8Array([song.timeSignature]).buffer);
+        // Write vanilla instrument count
+        view.setUint8(offset++, song.vanillaInstrumentCount || 16);
 
-            append(new Uint32Array([song.minutesSpent]).buffer);
-            append(new Uint32Array([song.leftClicks]).buffer);
-            append(new Uint32Array([song.rightClicks]).buffer);
-            append(new Uint32Array([song.blocksAdded]).buffer);
-            append(new Uint32Array([song.blocksRemoved]).buffer);
+        // Write song length
+        view.setUint16(offset, song.length || 1, true);
+        offset += 2;
 
+        // Write layer count (initial)
+        const layerCount = song.layersData.length || 1;
+        view.setUint16(offset, layerCount, true);
+        offset += 2;
+
+        // Write song metadata
+        offset = writeString(view, offset, song.title || 'Untitled');
+        offset = writeString(view, offset, song.author || '');
+        if (song.version >= 4) {
+            offset = writeString(view, offset, song.originalAuthor || '');
+        }
+        offset = writeString(view, offset, song.description || '');
+
+        // Write additional metadata
+        view.setUint16(offset, song.tempo || 12000, true);
+        offset += 2;
+        view.setUint8(offset++, song.autosave || 0);
+        view.setUint8(offset++, song.autosaveDuration || 0);
+        view.setUint8(offset++, song.timeSignature || 4);
+        view.setUint32(offset, song.minutesSpent || 0, true);
+        offset += 4;
+        view.setUint32(offset, song.leftClicks || 0, true);
+        offset += 4;
+        view.setUint32(offset, song.rightClicks || 0, true);
+        offset += 4;
+        view.setUint32(offset, song.blocksAdded || 0, true);
+        offset += 4;
+        view.setUint32(offset, song.blocksRemoved || 0, true);
+        offset += 4;
+        offset = writeString(view, offset, song.midiFilename || '');
+
+        // Write loop data (NBS v4+)
+        if (song.version >= 4) {
+            view.setUint8(offset++, song.loop?.enabled ? 1 : 0);
+            view.setUint16(offset, song.loop?.maxCount || 0, true);
+            offset += 2;
+            view.setUint16(offset, song.loop?.startTick || 0, true);
+            offset += 2;
+            view.setUint16(offset, song.loop?.endTick || 0, true);
+            offset += 2;
+        }
+
+        // Write layer count (second write)
+        view.setUint16(offset, layerCount, true);
+        offset += 2;
+
+        // Write layers
+        console.log('Saving layers:', layerCount);
+        for (let i = 0; i < layerCount; i++) {
+            const layer = song.layersData[i] || {
+                name: `Layer ${i + 1}`,
+                volume: 100,
+                pan: 100,
+                locked: false,
+                mute: false,
+                solo: false,
+                instrument: 0,
+                customSound: null,
+                pressKey: 36 + i * 2,
+                automation: { enabled: false, points: [] },
+                notes: []
+            };
+            offset = writeString(view, offset, layer.name);
+            view.setUint8(offset++, Math.min(layer.volume || 100, 100));
             if (song.version >= 4) {
-                appendString(song.midiFilename || '');
-                append(new Uint8Array([song.loop.enabled ? 1 : 0]).buffer);
-                append(new Uint16Array([song.loop.maxCount, song.loop.startTick, song.loop.endTick]).buffer);
+                view.setUint8(offset++, layer.pan || 100);
             }
+            view.setUint8(offset++, layer.locked ? 1 : 0);
+            view.setUint8(offset++, layer.mute ? 1 : 0);
+            view.setUint8(offset++, layer.solo ? 1 : 0);
+            view.setUint8(offset++, Math.min(layer.instrument || 0, 255));
+            console.log(`Saved Layer ${i + 1}:`, { name: layer.name, notes: layer.notes.length });
+        }
 
-            append(new Uint16Array([song.layers]).buffer);
-            song.layersData.slice(0, song.layers).forEach(l => {
-                appendString(l.name);
-                append(new Uint8Array([l.volume, l.pan, l.locked ? 1 : 0, l.mute ? 1 : 0, l.solo ? 1 : 0, l.instrument]).buffer);
-            });
+        // Collect and sort all notes
+        let allNotes = [];
+        song.layersData.forEach((layer, layerIndex) => {
+            if (layer?.notes?.length > 0) {
+                layer.notes.forEach(note => {
+                    allNotes.push({ layer: layerIndex, ...note });
+                });
+            }
+        });
+        allNotes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch);
 
-            const notes = [];
-            song.layersData.slice(0, song.layers).forEach((l, layerIdx) => {
-                l.notes.forEach(n => notes.push({ ...n, layer: layerIdx }));
+        // Write note count
+        view.setUint16(offset, allNotes.length, true);
+        offset += 2;
+        console.log('Saving notes:', allNotes.length);
+
+        // Write notes
+        allNotes.forEach((note, index) => {
+            view.setUint32(offset, note.tick || 0, true);
+            offset += 4;
+            view.setUint8(offset++, note.layer);
+            view.setUint8(offset++, note.pitch || 0);
+            view.setUint8(offset++, note.velocity || 100);
+            if (song.version >= 4) {
+                view.setUint8(offset++, note.pan || 100);
+                view.setUint8(offset++, note.fade || 0);
+                view.setUint16(offset, note.duration || 1, true);
+                offset += 2;
+            }
+            console.log(`Saved Note ${index + 1}: Layer ${note.layer}, Tick ${note.tick}, Pitch ${note.pitch}`);
+        });
+
+        // Prompt for file name
+        const defaultName = document.getElementById('song-title')?.value.trim() || 'Untitled';
+        let fileName = prompt('Masukkan nama file untuk disimpan:', defaultName);
+        if (fileName === null) {
+            console.log('Save dibatalkan oleh pengguna.');
+            return; // Batal save kalau user klik Cancel
+        }
+        fileName = fileName ? fileName.trim() : defaultName;
+        // Sanitize file name
+        fileName = fileName.replace(/[<>\:"/\\|?*]+/g, '_').replace(/\s+/g, '_');
+        if (!fileName) fileName = 'Untitled';
+
+        // Truncate buffer and save
+        const finalBuffer = buffer.slice(0, offset);
+        const blob = new Blob([finalBuffer], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.nbs`;
+        a.click();
+        URL.revokeObjectURL(url);
+        console.log('Saved NBS file:', `${fileName}.nbs`, 'Size:', offset, 'bytes');
+    } catch (err) {
+        console.error('Error saving NBS file:', err);
+        alert(`Error saving NBS file: ${err.message}`);
+    }
+}
+
+        function exportMidi() {
+    if (song.length === 0) {
+        alert('No song data to export. Create some notes first!');
+        return;
+    }
+    const midi = new Midi();
+    midi.header.setTempo(60000000 / (song.tempo / 100));
+    midi.header.setTimeSignature(song.timeSignature, 4);
+
+    song.layersData.slice(0, song.layers).forEach((layer, i) => {
+        const track = midi.addTrack();
+        layer.notes.forEach(note => {
+            track.addNote({
+                midi: note.pitch + 33, // Offset for MIDI range
+                ticks: note.tick * midi.header.ppq / 4,
+                durationTicks: note.duration * midi.header.ppq / 4,
+                velocity: note.velocity / 100
             });
-            notes.sort((a, b) => a.tick - b.tick);
-            append(new Uint16Array([notes.length]).buffer);
-            notes.forEach(n => {
-                append(new Uint32Array([n.tick]).buffer);
-                append(new Uint8Array([n.layer, n.pitch, n.velocity]).buffer);
-                if (song.version >= 4) {
-                    append(new Uint8Array([n.pan, n.fade]).buffer);
-                    append(new Uint16Array([n.duration]).buffer);
+        });
+    });
+
+    const blob = new Blob([midi.toArray()], { type: 'audio/midi' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${song.title || 'untitled'}.mid`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert(`Exported: ${song.title || 'untitled'}.mid`);
+}
+
+function exportSchematic() {
+    if (song.length === 0) {
+        alert('No song data to export. Create some notes first!');
+        return;
+    }
+    // Simple schematic export as JSON for now
+    const schematic = {
+        version: '1.0',
+        song: song.title || 'Untitled',
+        length: song.length,
+        layers: song.layers,
+        layersData: song.layersData.slice(0, song.layers).map(layer => ({
+            name: layer.name,
+            instrument: layer.instrument,
+            notes: layer.notes.map(note => ({tick: note.tick, pitch: note.pitch, velocity: note.velocity, duration: note.duration}))
+        }))
+    };
+    const blob = new Blob([JSON.stringify(schematic, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${song.title || 'untitled'}-schematic.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    alert(`Exported schematic: ${song.title || 'untitled'}-schematic.json`);
+}
+
+function Midi() {
+    this.header = { ppq: 480, tempos: [{microsPerQuarter: 500000}], timeSignatures: [{timeSignature: [4, 2]}] };
+    this.tracks = [];
+    this.addTrack = function() { this.tracks.push({notes: []}); return this.tracks[this.tracks.length - 1]; };
+    this.toArray = function() { return new Uint8Array([77, 84, 104, 100, 0, 0, 0, 6, 0, 1, 0, 2, 0, 120, 0]); }; // Placeholder MIDI header
+}
+
+async function loadMidi(file) {
+    try {
+        alert('MIDI import is experimental. Only basic note data will be imported.');
+        const buffer = await file.arrayBuffer();
+        const view = new DataView(buffer);
+        let offset = 0;
+
+        // Validasi header MIDI
+        if (view.getUint32(0) !== 0x4D546864) throw new Error('Invalid MIDI file');
+        offset += 6; // Skip MThd dan panjang header
+        const format = view.getUint16(offset, false); offset += 2;
+        const trackCount = view.getUint16(offset, false); offset += 2;
+        const ticksPerBeat = view.getUint16(offset, false); offset += 2;
+
+        // Inisialisasi song
+        song = {
+            version: 5,
+            vanillaInstrumentCount: 16,
+            length: 0,
+            layers: Math.min(trackCount, 16),
+            title: file.name.replace(/\.mid$/, ''),
+            author: '',
+            originalAuthor: '',
+            description: '',
+            tempo: 12000,
+            autosave: 0,
+            autosaveDuration: 0,
+            timeSignature: 4,
+            minutesSpent: 0,
+            leftClicks: 0,
+            rightClicks: 0,
+            blocksAdded: 0,
+            blocksRemoved: 0,
+            midiFilename: file.name,
+            loop: { enabled: false, maxCount: 0, startTick: 0, endTick: 0 },
+            masterVolume: 150,
+            layersData: Array(Math.min(trackCount, 16)).fill().map((_, i) => ({
+                name: `MIDI Layer ${i + 1}`,
+                volume: 100,
+                pan: 100,
+                locked: false,
+                mute: false,
+                solo: false,
+                instrument: i % instruments.length,
+                customSound: null,
+                pressKey: 36 + i * 2,
+                automation: { enabled: false, points: [] },
+                notes: []
+            }))
+        };
+
+        // Parsing track sederhana (hanya note-on untuk sekarang)
+        for (let t = 0; t < trackCount && t < 16; t++) {
+            if (view.getUint32(offset) !== 0x4D54726B) throw new Error('Invalid track');
+            offset += 4;
+            const trackLength = view.getUint32(offset, false); offset += 4;
+            const trackEnd = offset + trackLength;
+            let currentTick = 0;
+
+            while (offset < trackEnd) {
+                // Baca delta time
+                let deltaTime = 0;
+                while (true) {
+                    const byte = view.getUint8(offset++);
+                    deltaTime = (deltaTime << 7) + (byte & 0x7F);
+                    if (!(byte & 0x80)) break;
                 }
-            });
+                currentTick += deltaTime;
 
-            return data;
+                // Baca event
+                const status = view.getUint8(offset++);
+                const eventType = (status & 0xF0) >> 4;
+                const channel = status & 0x0F;
+
+                if (eventType === 0x9) { // Note On
+                    const noteNumber = view.getUint8(offset++);
+                    const velocity = view.getUint8(offset++);
+                    if (velocity > 0 && noteNumber >= 33 && noteNumber <= 57) { // Sesuaikan dengan rentang NBS
+                        const pitch = noteNumber - 33;
+                        song.layersData[t].notes.push({
+                            tick: Math.round(currentTick / ticksPerBeat * 4),
+                            pitch,
+                            velocity: Math.min(Math.round(velocity / 127 * 100), 100),
+                            pan: 100,
+                            fade: 0,
+                            duration: 1 // Default duration, perlu parsing note-off untuk akurat
+                        });
+                    }
+                } else if (eventType === 0x8 || (eventType === 0x9 && view.getUint8(offset + 1) === 0)) { // Note Off
+                    offset += 2; // Skip note number dan velocity
+                } else {
+                    offset += 2; // Skip data yang tidak dikenali
+                }
+            }
         }
 
-        function importMidi() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.mid';
-            input.onchange = e => alert('MIDI import not fully implemented yet!');
-            input.click();
-        }
+        // Perbarui panjang lagu dan urutkan catatan
+        song.layersData.forEach(l => l.notes.sort((a, b) => a.tick - b.tick || a.pitch - b.pitch));
+        song.length = Math.max(...song.layersData.map(l => l.notes.length ? Math.max(...l.notes.map(n => n.tick + n.duration)) + 1 : 0), 1);
+        currentLayer = 0;
+        updateLayersPanel();
+        drawPianoRoll();
+        saveHistory();
+        document.getElementById('tempo').value = song.tempo / 100;
+        document.getElementById('song-title').value = song.title;
+        alert('MIDI imported successfully!');
+    } catch (err) {
+        alert('Error importing MIDI: ' + err.message + '. Please use .nbs files for best compatibility.');
+    }
+}
 
-        function exportMidi() { alert('MIDI export not fully implemented yet!'); }
-        function exportSchematic() { alert('Schematic export not fully implemented yet!'); }
         function exitApp() { if (confirm('Exit application?')) window.close(); }
 
         function showSongInfo() {
