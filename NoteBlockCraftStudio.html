@@ -78,6 +78,12 @@
             box-sizing: border-box;
         }
 
+        canvas {
+    font-smooth: never;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
         body {
             font-family: 'VT323', 'Roboto Mono', monospace;
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
@@ -376,16 +382,17 @@
         }
 
         .layer-item {
-            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            margin-bottom: 8px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
+    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: visible;
+    z-index: 1;
+}
 
         .layer-item::before {
             content: '';
@@ -406,10 +413,8 @@
         }
 
         .layer-item.active {
-            border-color: var(--accent-color);
-            background: linear-gradient(135deg, var(--bg-active) 0%, var(--accent-color) 100%);
-            color: white;
-        }
+    z-index: 2;
+}
 
         .layer-item.active::before {
             transform: scaleY(1);
@@ -493,21 +498,30 @@
         }
 
         .setting-input {
-            flex: 1;
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: 'VT323', monospace;
-            transition: all 0.2s;
-        }
+    flex: 1;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'VT323', monospace;
+    transition: all 0.2s;
+    position: relative;
+    z-index: 100;
+}
 
-        .setting-input:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 8px rgba(0,122,204,0.3);
-        }
+.setting-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px rgba(0,122,204,0.3);
+    z-index: 101;
+}
+
+.setting-input option {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 4px;
+}
 
         .setting-slider {
             flex: 1;
@@ -659,12 +673,14 @@
         }
 
         #pianoroll {
-            position: absolute;
-            top: 0;
-            left: 60px;
-            cursor: crosshair;
-            z-index: 2;
-        }
+    position: absolute;
+    top: 0;
+    left: 60px;
+    cursor: crosshair;
+    z-index: 2;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
 
         #piano-keys {
             position: absolute;
@@ -769,83 +785,43 @@
         }
 
         /* Note Blocks */
-        .note-block {
-            position: absolute;
-            border-radius: 4px;
-            cursor: move;
-            transition: all 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-            border: 2px solid rgba(0,0,0,0.3);
-            z-index: 5;
-            font-family: 'VT323', monospace;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
-
-        .note-block::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .note-block:hover::before {
-            left: 100%;
-        }
+        
 
         .note-block:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            z-index: 6;
-        }
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 6;
+}
 
         .note-block.selected {
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(0,122,204,0.3), 0 4px 12px rgba(0,0,0,0.6);
-            animation: selectedPulse 1s infinite;
-        }
+    border: 2px solid #007ACC;
+    box-shadow: 0 0 0 3px rgba(0,122,204,0.3), 0 5px 15px rgba(0,0,0,0.5);
+    animation: selectedPulse 1s infinite;
+}
 
         @keyframes selectedPulse {
-            0% { box-shadow: 0 0 0 3px rgba(0,122,204,0.3), 0 4px 12px rgba(0,0,0,0.6); }
-            50% { box-shadow: 0 0 0 6px rgba(0,122,204,0.1), 0 4px 12px rgba(0,0,0,0.6); }
-            100% { box-shadow: 0 0 0 3px rgba(0,122,204,0.3), 0 4px 12px rgba(0,0,0,0.6); }
-        }
+    0% { box-shadow: 0 0 0 3px rgba(0,122,204,0.3), 0 5px 15px rgba(0,0,0,0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(0,122,204,0.1), 0 5px 15px rgba(0,0,0,0.5); }
+    100% { box-shadow: 0 0 0 3px rgba(0,122,204,0.3), 0 5px 15px rgba(0,0,0,0.5); }
+}
+
+@keyframes notePlay {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); box-shadow: 0 0 20px currentColor; }
+    100% { transform: scale(1); }
+}
 
         .note-block.playing {
             animation: notePlay 0.3s ease-out;
         }
 
-        @keyframes notePlay {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); box-shadow: 0 0 15px currentColor; }
-            100% { transform: scale(1); }
-        }
 
         .note-block.dragging {
-            opacity: 0.7;
-            cursor: grabbing;
-            z-index: 100;
-        }
+    opacity: 0.7;
+    cursor: grabbing;
+    z-index: 100;
+}
 
-        .note-label {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            font-size: 8px;
-            color: rgba(255,255,255,0.8);
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
-            pointer-events: none;
-            z-index: 10;
-        }
 
         /* Right Sidebar - Properties */
         .right-sidebar {
@@ -1384,6 +1360,26 @@
             font-family: 'VT323', monospace;
             font-size: 14px;
             padding: 5px;
+        }
+
+        /* Layer Visualizer */
+        .layer-visualizer {
+            height: 24px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            margin: 8px 0;
+            padding: 0 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+        }
+
+        .layer-visualizer-bar {
+            width: 8px;
+            margin: 0 1px;
+            background: var(--accent-color);
+            transition: height 0.1s ease-out;
+            border-radius: 2px 2px 0 0;
         }
 
         /* Responsive */
@@ -1937,6 +1933,7 @@
         let audioEffects = {};
         let initialNotePositions = []; // Store initial positions for drag operations
         let selectionEnd = { x: 0, y: 0 }; // End point for selection box
+        
 
         // Theme definitions
         const themes = {
@@ -2006,79 +2003,161 @@
             }
         };
 
-        // Sound URLs for instruments
         const soundUrls = {
-            0: 'https://files.catbox.moe/olm2z1.mp3', 1: 'https://files.catbox.moe/goyt5q.mp3', 2: 'https://files.catbox.moe/wwtu0o.mp3',
-            3: 'https://files.catbox.moe/od05s4.mp3', 4: 'https://files.catbox.moe/od05s4.mp3', 5: 'https://files.catbox.moe/d4nhg1.mp3',
-            6: 'https://files.catbox.moe/81usy9.mp3', 7: 'https://files.catbox.moe/l24srx.mp3', 8: 'https://files.catbox.moe/yddw9v.mp3',
-            9: 'https://files.catbox.moe/jd10fh.mp3', 10: 'https://files.catbox.moe/uoi110.mp3', 11: 'https://files.catbox.moe/rlok94.mp3',
-            12: 'https://files.catbox.moe/wtb49c.mp3', 13: 'https://files.catbox.moe/dwuzpo.mp3', 14: 'https://files.catbox.moe/6bg8l6.mp3',
-            15: 'https://files.catbox.moe/ep7a6o.mp3'
+            0: 'https://files.catbox.moe/olm2z1.mp3',           // Harp
+            1: 'https://files.catbox.moe/goyt5q.mp3',          // Bass
+            2: 'https://files.catbox.moe/wwtu0o.mp3',          // Basedrum
+            3: 'https://files.catbox.moe/od05s4.mp3',          // Snare (used for Hat)
+            4: 'https://files.catbox.moe/od05s4.mp3',          // Snare
+            5: 'https://files.catbox.moe/d4nhg1.mp3',          // Click
+            6: 'https://files.catbox.moe/81usy9.mp3',         // Guitar
+            7: 'https://files.catbox.moe/l24srx.mp3',          // Flute
+            8: 'https://files.catbox.moe/yddw9v.mp3',           // Bell
+            9: 'https://files.catbox.moe/jd10fh.mp3',       // Chime
+            10: 'https://files.catbox.moe/uoi110.mp3',         // Pling
+            11: 'https://files.catbox.moe/rlok94.mp3', // Xylophone
+            12: 'https://files.catbox.moe/wtb49c.mp3',      // Cow Bell
+            13: 'https://files.catbox.moe/dwuzpo.mp3',    // Didgeridoo
+            14: 'https://files.catbox.moe/6bg8l6.mp3',           // Bit
+            15: 'https://files.catbox.moe/ep7a6o.mp3'          // Banjo
         };
 
         // Instrument data with Minecraft-style icons and colors
-        const instruments = [
-            { name: 'Harp', icon: '🎹', color: '#4EC9B0' },
-            { name: 'Bass', icon: '🎸', color: '#D19A66' },
-            { name: 'Basedrum', icon: '🥁', color: '#569CD6' },
-            { name: 'Snare', icon: '🎵', color: '#CE9178' },
-            { name: 'Click', icon: '🔔', color: '#C586C0' },
-            { name: 'Guitar', icon: '🎸', color: '#B5CEA8' },
-            { name: 'Flute', icon: '🎺', color: '#9CDCFE' },
-            { name: 'Bell', icon: '🔔', color: '#DCDCAA' },
-            { name: 'Chime', icon: '🎼', color: '#4FC1FF' },
-            { name: 'Pling', icon: '✨', color: '#FFD700' },
-            { name: 'Xylo', icon: '🎹', color: '#CE9178' },
-            { name: 'Cow Bell', icon: '🐄', color: '#D16969' },
-            { name: 'Didgeridoo', icon: '🦯', color: '#C586C0' },
-            { name: 'Bit', icon: '💻', color: '#569CD6' },
-            { name: 'Banjo', icon: '🪕', color: '#D19A66' }
-        ];
+const instruments = [
+    { name: 'Harp', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/oak_planks.png', color: '#4EC9B0' },
+    { name: 'Bass Drum', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/stone.png', color: '#D19A66' },
+    { name: 'Snare Drum', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/sand.png', color: '#569CD6' },
+    { name: 'Cymbal (Hi-Hat)', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/glass.png', color: '#CE9178' },
+    { name: 'Bass', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/dirt.png', color: '#C586C0' },
+    { name: 'Flute', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/white_wool.png', color: '#B5CEA8' },
+    { name: 'Bell', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/gold_block.png', color: '#9CDCFE' },
+    { name: 'Chime', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/ice.png', color: '#DCDCAA' },
+    { name: 'Xylophone', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/bone_block_side.png', color: '#4FC1FF' },
+    { name: 'Iron Xylophone', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/iron_block.png', color: '#FFD700' },
+    { name: 'Cowbell', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/clay.png', color: '#CE9178' },
+    { name: 'Didgeridoo', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/pumpkin_side.png', color: '#D16969' },
+    { name: 'Bit', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/emerald_block.png', color: '#C586C0' },
+    { name: 'Banjo', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/hay_block_side.png', color: '#569CD6' },
+    { name: 'Pling', icon: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/glowstone.png', color: '#D19A66' }
+];
 
         // Color presets for notes
         const colorPresets = [
             '#FF5252', '#FF9800', '#FFEB3B', '#CDDC39', '#4CAF50', '#00BCD4', '#2196F3', '#3F51B5', '#9C27B0', '#673AB7', '#F44336', '#E91E63', '#9C27B0', '#795548', '#607D8B', '#9E9E9E', '#FFFFFF'
         ];
 
-        // Initialize application
-        function init() {
-            createParticleEffect();
-            updateLoadingProgress(10, 'Initializing audio context...');
-            initializeAudio();
+        function preloadInstrumentImages() {
+    instruments.forEach((instrument, index) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous'; // Handle CORS
+        img.onload = () => {
+            console.log(`Loaded instrument image: ${instrument.name}`);
+            // Store the loaded image
+            instrument.imageElement = img;
+        };
+        img.onerror = () => {
+            console.warn(`Failed to load instrument image: ${instrument.name}`);
+            // Create a fallback colored square
+            const canvas = document.createElement('canvas');
+            canvas.width = 16;
+            canvas.height = 16;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = instrument.color;
+            ctx.fillRect(0, 0, 16, 16);
             
-            updateLoadingProgress(20, 'Setting up canvas...');
-            setupCanvas();
+            const fallbackImg = new Image();
+            fallbackImg.src = canvas.toDataURL();
+            instrument.imageElement = fallbackImg;
+        };
+        img.src = instrument.icon;
+    });
+}
+
+        // Initialize application with proper image loading
+// Initialize application with proper text rendering
+function init() {
+    createParticleEffect();
+    updateLoadingProgress(10, 'Initializing audio context...');
+    initializeAudio();
+    
+    updateLoadingProgress(20, 'Setting up canvas...');
+    setupCanvas();
+    
+    updateLoadingProgress(30, 'Loading note block image...');
+    
+    // Load note block image first
+    noteBlockImage.onload = () => {
+        noteBlockImage.ready = true;
+        updateLoadingProgress(40, 'Note block image loaded');
+        
+        // Continue loading instruments
+        loadInstruments().then(() => {
+            updateLoadingProgress(60, 'Setting up event listeners...');
+            setupEventListeners();
             
-            updateLoadingProgress(30, 'Loading instruments...');
-            loadInstruments().then(() => {
-                updateLoadingProgress(50, 'Setting up event listeners...');
-                setupEventListeners();
+            updateLoadingProgress(70, 'Creating layers...');
+            updateLayerList();
+            
+            updateLoadingProgress(80, 'Drawing interface...');
+            drawPianoRoll();
+            
+            updateLoadingProgress(90, 'Updating status...');
+            updateStatusBar();
+            
+            updateLoadingProgress(100, 'Ready!');
+            
+            // Hide loading screen after a short delay
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transform = 'scale(0.8)';
+                loadingScreen.style.transition = 'all 0.5s ease-out';
                 
-                updateLoadingProgress(70, 'Creating layers...');
-                updateLayerList();
-                
-                updateLoadingProgress(80, 'Drawing interface...');
-                drawPianoRoll();
-                
-                updateLoadingProgress(90, 'Updating status...');
-                updateStatusBar();
-                
-                updateLoadingProgress(100, 'Ready!');
-                
-                // Hide loading screen after a short delay
                 setTimeout(() => {
-                    const loadingScreen = document.getElementById('loadingScreen');
-                    loadingScreen.style.opacity = '0';
-                    loadingScreen.style.transform = 'scale(0.8)';
-                    loadingScreen.style.transition = 'all 0.5s ease-out';
-                    
-                    setTimeout(() => {
-                        loadingScreen.style.display = 'none';
-                        setStatus('Ready to create music!');
-                    }, 500);
-                }, 1000);
-            });
-        }
+                    loadingScreen.style.display = 'none';
+                    setStatus('Ready to create music!');
+                }, 500);
+            }, 1000);
+        });
+    };
+    
+    noteBlockImage.onerror = () => {
+        console.warn('Failed to load note block image, using fallback');
+        noteBlockImage.ready = false;
+        
+        // Continue without image
+        loadInstruments().then(() => {
+            updateLoadingProgress(60, 'Setting up event listeners...');
+            setupEventListeners();
+            
+            updateLoadingProgress(70, 'Creating layers...');
+            updateLayerList();
+            
+            updateLoadingProgress(80, 'Drawing interface...');
+            drawPianoRoll();
+            
+            updateLoadingProgress(90, 'Updating status...');
+            updateStatusBar();
+            
+            updateLoadingProgress(100, 'Ready!');
+            
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transform = 'scale(0.8)';
+                loadingScreen.style.transition = 'all 0.5s ease-out';
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    setStatus('Ready to create music!');
+                }, 500);
+            }, 1000);
+        });
+    };
+    
+    // Start loading the image
+    noteBlockImage.src = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/noteblock.png';
+}
 
         // Update loading progress
         function updateLoadingProgress(progress, status) {
@@ -2234,18 +2313,18 @@
             // Create reverb effect
             const convolver = audioContext.createConvolver();
             const reverbGain = audioContext.createGain();
-            reverbGain.gain.value = 0.3;
+            reverbGain.gain.value = 0.5; // Ditingkatkan dari 0.3 ke 0.5
             reverbGain.connect(masterGain);
             reverbGain.connect(audioContext.destination);
             
             // Create delay effect
             const delay = audioContext.createDelay(1.0);
             const delayGain = audioContext.createGain();
-            delayGain.gain.value = 0.2;
+            delayGain.gain.value = 0.4; // Ditingkatkan dari 0.2 ke 0.4
             
             // Create feedback gain untuk delay
             const feedbackGain = audioContext.createGain();
-            feedbackGain.gain.value = 0.4; // Kurangi nilai ini untuk mengurangi feedback
+            feedbackGain.gain.value = 0.6; // Ditingkatkan dari 0.4 ke 0.6
             
             delay.connect(feedbackGain);
             feedbackGain.connect(delay);
@@ -2259,8 +2338,8 @@
             
             // Store effects nodes
             audioEffects = {
-                reverb: { enabled: false, level: 0.3, node: convolver, gain: reverbGain },
-                delay: { enabled: false, level: 0.2, node: delay, gain: delayGain, feedback: feedbackGain },
+                reverb: { enabled: false, level: 0.5, node: convolver, gain: reverbGain },
+                delay: { enabled: false, level: 0.4, node: delay, gain: delayGain, feedback: feedbackGain },
                 distortion: { enabled: false, level: 0, node: distortion }
             };
         }
@@ -2983,6 +3062,9 @@
             
             // Update visualizer
             updateVisualizer(pitch, velocity);
+            
+            // Update layer visualizer
+            updateLayerVisualizer(layerIndex, velocity);
         }
 
         // Animate piano key
@@ -3042,6 +3124,51 @@
                     bar.style.transform = 'scaleY(1)';
                 }
             });
+        }
+
+        // Update layer visualizer
+        function updateLayerVisualizer(layerIndex, velocity) {
+            const visualizerContainer = document.getElementById(`layer-visualizer-${layerIndex}`);
+            if (!visualizerContainer) return;
+            
+            const bars = visualizerContainer.querySelectorAll('.layer-visualizer-bar');
+            if (bars.length === 0) return;
+            
+            bars.forEach((bar, index) => {
+                // Calculate height based on velocity and bar index
+                const baseHeight = (velocity / 100) * 20;
+                const distance = Math.abs(index - bars.length / 2);
+                const influence = Math.max(0, 1 - (distance / (bars.length / 2)));
+                const barHeight = Math.max(2, baseHeight * influence);
+                
+                // Apply new height with smooth animation
+                const currentHeight = parseInt(bar.style.height) || 2;
+                const newHeight = currentHeight * 0.7 + barHeight * 0.3; // Moving average
+                bar.style.height = newHeight + 'px';
+                
+                // Apply color based on layer
+                const layer = song.layers[layerIndex];
+                const layerColor = layer.color || instruments[layer.instrument].color;
+                bar.style.background = layerColor;
+                
+                // Animation effect for active bar
+                if (index === Math.floor(bars.length / 2)) {
+                    bar.style.boxShadow = `0 0 5px ${layerColor}`;
+                    bar.style.transform = 'scaleY(1.2)';
+                } else {
+                    bar.style.boxShadow = 'none';
+                    bar.style.transform = 'scaleY(1)';
+                }
+            });
+            
+            // Reset visualizer after a short time
+            setTimeout(() => {
+                bars.forEach(bar => {
+                    bar.style.height = '2px';
+                    bar.style.boxShadow = 'none';
+                    bar.style.transform = 'scaleY(1)';
+                });
+            }, 500);
         }
 
         // Color conversion functions
@@ -3131,73 +3258,146 @@
             }
         }
         
-        // Draw notes with layer labels
-        function drawNotes(ctx) {
-            song.layers.forEach((layer, layerIndex) => {
-                if (layer.mute) return;
-                if (layer.solo && !song.layers.some(l => l.solo && !l.mute)) return;
-                
-                const instrument = instruments[layer.instrument];
-                
-                layer.notes.forEach(note => {
-                    const x = (note.tick * 60 * zoomLevel) - offsetX;
-                    const y = (note.pitch * 20) - offsetY;
-                    const width = (note.duration * 60 * zoomLevel) - 4;
-                    const height = note.size || 18; // Use note.size if available, otherwise default 18
-                    
-                    // Skip if outside visible area
-                    if (x + width < 0 || x > ctx.canvas.width || y + height < 0 || y > ctx.canvas.height) {
-                        return;
-                    }
-                    
-                    // Use specific note color if available, or use layer color
-                    const noteColor = note.color || layer.color || instrument.color;
-                    
-                    // Draw note block with gradient for more attractive effect
-                    const gradient = ctx.createLinearGradient(x, y, x, y + height);
-                    gradient.addColorStop(0, noteColor);
-                    gradient.addColorStop(1, adjustColor(noteColor, -30)); // Slightly darker at bottom
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.fillRect(x, y, width, height);
-                    
-                    // Draw note border
-                    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(x, y, width, height);
-                    
-                    // Draw selection highlight
-                    if (selectedNotes.some(n => n.layer === layerIndex && n.tick === note.tick && n.pitch === note.pitch)) {
-                        ctx.strokeStyle = '#007ACC';
-                        ctx.lineWidth = 3;
-                        ctx.strokeRect(x - 2, y - 2, width + 4, height + 4);
-                    }
-                    
-                    // Draw velocity indicator
-                    const velocityHeight = height * (note.velocity / 100);
-                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                    ctx.fillRect(x, y + height - velocityHeight, width, velocityHeight);
-                    
-                    // Draw layer label on note
-                    if (width > 30 && height > 15) {
-                        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                        ctx.font = 'bold 10px VT323';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(`L${layerIndex + 1}`, x + width/2, y + height/2);
-                    }
-                });
-            });
-        }
+        // Draw notes with clear text and simple shape
+// Draw notes with clearly visible text
+function drawNotes(ctx) {
+    song.layers.forEach((layer, layerIndex) => {
+        if (layer.mute) return;
+        if (layer.solo && !song.layers.some(l => l.solo && !l.mute)) return;
+        
+        const instrument = instruments[layer.instrument];
+        
+        layer.notes.forEach(note => {
+            const x = (note.tick * 60 * zoomLevel) - offsetX;
+            const y = (note.pitch * 20) - offsetY;
+            const width = (note.duration * 60 * zoomLevel) - 4;
+            const height = note.size || 18;
+            
+            // Skip if outside visible area
+            if (x + width < 0 || x > ctx.canvas.width || y + height < 0 || y > ctx.canvas.height) {
+                return;
+            }
+            
+            // Use specific note color if available, or use layer color
+            const noteColor = note.color || layer.color || instrument.color;
+            
+            // Draw simple note rectangle
+            ctx.fillStyle = noteColor;
+            ctx.fillRect(x, y, width, height);
+            
+            // Draw note block pattern if image is loaded
+            if (noteBlockImage.ready) {
+                ctx.save();
+                ctx.globalAlpha = 0.4;
+                ctx.drawImage(noteBlockImage, x, y, width, height);
+                ctx.globalAlpha = 1.0;
+                ctx.restore();
+            }
+            
+            // Draw border
+            ctx.strokeStyle = adjustColor(noteColor, -40);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, width, height);
+            
+            // Draw selection highlight
+            if (selectedNotes.some(n => n.layer === layerIndex && n.tick === note.tick && n.pitch === note.pitch)) {
+                ctx.strokeStyle = '#007ACC';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 3]);
+                ctx.strokeRect(x - 2, y - 2, width + 4, height + 4);
+                ctx.setLineDash([]);
+            }
+            
+            // Draw velocity indicator
+            const velocityHeight = height * (note.velocity / 100);
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillRect(x + width - 4, y + height - velocityHeight, 4, velocityHeight);
+            
+            // ALWAYS DRAW TEXT - SIMPLIFIED APPROACH
+            // Create a white text box that's always visible
+            const textBoxWidth = Math.min(width, 50);
+            const textBoxHeight = 20;
+            const textBoxX = x + (width - textBoxWidth) / 2;
+            const textBoxY = y + (height - textBoxHeight) / 2;
+            
+            // Draw white background for text
+            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.fillRect(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
+            
+            // Draw border around text box
+            ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(textBoxX, textBoxY, textBoxWidth, textBoxHeight);
+            
+            // Draw text with maximum contrast
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 12px Arial'; // Use Arial instead of VT323 for better visibility
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Layer number (top)
+            ctx.fillText(`L${layerIndex + 1}`, textBoxX + textBoxWidth/2, textBoxY + 7);
+            
+            // Note name (bottom)
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const octave = Math.floor(note.pitch / 12);
+            const noteName = noteNames[note.pitch % 12];
+            ctx.fillText(`${noteName}${octave}`, textBoxX + textBoxWidth/2, textBoxY + 13);
+        });
+    });
+}
 
-        // Function to adjust color (make darker/lighter)
-        function adjustColor(color, amount) {
-            const num = parseInt(color.replace("#", ""), 16);
-            const r = Math.max(0, Math.min(255, (num >> 16) + amount));
-            const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
-            const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
-            return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+
+       // Global variable for note block image
+let noteBlockImage = new Image();
+noteBlockImage.src = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.4/assets/minecraft/textures/block/noteblock.png';
+noteBlockImage.ready = false;
+
+noteBlockImage.onload = () => {
+    noteBlockImage.ready = true;
+    // Redraw canvas when image is loaded
+    drawPianoRoll();
+};
+
+// Simplified note block texture
+function createNoteBlockTexture(noteColor) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    const ctx = canvas.getContext('2d');
+    
+    // Fill with note color
+    ctx.fillStyle = noteColor;
+    ctx.fillRect(0, 0, 16, 16);
+    
+    // Add note block pattern if image is loaded
+    if (noteBlockImage.ready) {
+        ctx.globalAlpha = 0.3;
+        ctx.drawImage(noteBlockImage, 0, 0, 16, 16);
+        ctx.globalAlpha = 1.0;
+    } else {
+        // Add simple pattern as fallback
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 16; i += 2) {
+            ctx.beginPath();
+            ctx.moveTo(i, 0);
+            ctx.lineTo(i, 16);
+            ctx.stroke();
         }
+    }
+    
+    return canvas;
+}
+
+// Function to adjust color brightness
+function adjustColor(color, amount) {
+    const num = parseInt(color.replace("#", ""), 16);
+    const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+    const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
+    const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+    return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+}
 
         // Selection functions
         function startSelection(x, y) {
@@ -3339,51 +3539,214 @@
                 `${totalMinutes.toString().padStart(2, '0')}:${totalSecs.toString().padStart(2, '0')}:${totalMs.toString().padStart(2, '0')}`;
         }
 
-        // Update layer list
-        function updateLayerList() {
-            const layerList = document.getElementById('layerList');
-            layerList.innerHTML = '';
+        // Update layer list with proper event handling
+function updateLayerList() {
+    const layerList = document.getElementById('layerList');
+    layerList.innerHTML = '';
+    
+    song.layers.forEach((layer, index) => {
+        const layerItem = document.createElement('div');
+        layerItem.className = `layer-item ${index === currentLayer ? 'active' : ''}`;
+        
+        // Create layer header
+        const layerHeader = document.createElement('div');
+        layerHeader.className = 'layer-header';
+        
+        // Create layer name container
+        const layerName = document.createElement('div');
+        layerName.className = 'layer-name';
+        
+        // Create color indicator
+        const colorIndicator = document.createElement('div');
+        colorIndicator.className = 'layer-color-indicator';
+        colorIndicator.style.background = layer.color || instruments[layer.instrument].color;
+        
+        // Create instrument icon container
+        const iconContainer = document.createElement('div');
+        iconContainer.className = 'instrument-icon-container';
+        iconContainer.style.width = '16px';
+        iconContainer.style.height = '16px';
+        iconContainer.style.display = 'inline-block';
+        iconContainer.style.marginRight = '4px';
+        iconContainer.style.verticalAlign = 'middle';
+        
+        // Add instrument image
+        const instrumentImg = document.createElement('img');
+        instrumentImg.src = instruments[layer.instrument].icon;
+        instrumentImg.width = 16;
+        instrumentImg.height = 16;
+        instrumentImg.style.imageRendering = 'pixelated';
+        instrumentImg.onerror = function() {
+            // Fallback to colored square if image fails to load
+            this.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.style.width = '16px';
+            fallback.style.height = '16px';
+            fallback.style.backgroundColor = instruments[layer.instrument].color;
+            fallback.style.display = 'inline-block';
+            iconContainer.appendChild(fallback);
+        };
+        
+        iconContainer.appendChild(instrumentImg);
+        
+        // Create layer name text
+        const nameText = document.createElement('span');
+        nameText.textContent = layer.name;
+        
+        // Assemble layer name
+        layerName.appendChild(colorIndicator);
+        layerName.appendChild(iconContainer);
+        layerName.appendChild(nameText);
+        
+        // Create layer controls
+        const layerControls = document.createElement('div');
+        layerControls.className = 'layer-controls';
+        
+        // Create control buttons
+        const muteBtn = document.createElement('button');
+        muteBtn.className = `layer-control-btn ${layer.mute ? 'active' : ''}`;
+        muteBtn.textContent = 'M';
+        muteBtn.title = 'Mute';
+        muteBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleMute(index);
+        };
+        
+        const soloBtn = document.createElement('button');
+        soloBtn.className = `layer-control-btn ${layer.solo ? 'active' : ''}`;
+        soloBtn.textContent = 'S';
+        soloBtn.title = 'Solo';
+        soloBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleSolo(index);
+        };
+        
+        const lockBtn = document.createElement('button');
+        lockBtn.className = `layer-control-btn ${layer.locked ? 'active' : ''}`;
+        lockBtn.textContent = 'L';
+        lockBtn.title = 'Lock';
+        lockBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleLock(index);
+        };
+        
+        layerControls.appendChild(muteBtn);
+        layerControls.appendChild(soloBtn);
+        layerControls.appendChild(lockBtn);
+        
+        // Assemble layer header
+        layerHeader.appendChild(layerName);
+        layerHeader.appendChild(layerControls);
+        
+        // Create layer visualizer
+        const layerVisualizer = document.createElement('div');
+        layerVisualizer.className = 'layer-visualizer';
+        layerVisualizer.id = `layer-visualizer-${index}`;
+        
+        // Create layer settings
+        const layerSettings = document.createElement('div');
+        layerSettings.className = 'layer-settings';
+        
+        // Create instrument selector row
+        const instRow = document.createElement('div');
+        instRow.className = 'setting-row';
+        
+        const instLabel = document.createElement('span');
+        instLabel.className = 'setting-label';
+        instLabel.textContent = 'Inst:';
+        
+        const instSelect = document.createElement('select');
+        instSelect.className = 'setting-input';
+        instSelect.onclick = (e) => {
+            e.stopPropagation(); // Prevent dropdown from closing
+        };
+        instSelect.onchange = (e) => {
+            e.stopPropagation();
+            changeLayerInstrument(index, e.target.value);
+        };
+        
+        instruments.forEach((inst, j) => {
+            const option = document.createElement('option');
+            option.value = j;
+            option.textContent = inst.name;
+            option.selected = layer.instrument === j;
+            instSelect.appendChild(option);
+        });
+        
+        instRow.appendChild(instLabel);
+        instRow.appendChild(instSelect);
+        
+        // Create volume slider row
+        const volRow = document.createElement('div');
+        volRow.className = 'setting-row';
+        
+        const volLabel = document.createElement('span');
+        volLabel.className = 'setting-label';
+        volLabel.textContent = 'Vol:';
+        
+        const volSlider = document.createElement('input');
+        volSlider.type = 'range';
+        volSlider.className = 'setting-slider';
+        volSlider.min = '0';
+        volSlider.max = '100';
+        volSlider.value = layer.volume;
+        volSlider.onchange = (e) => {
+            e.stopPropagation();
+            changeLayerVolume(index, e.target.value);
+        };
+        
+        volRow.appendChild(volLabel);
+        volRow.appendChild(volSlider);
+        
+        // Assemble layer settings
+        layerSettings.appendChild(instRow);
+        layerSettings.appendChild(volRow);
+        
+        // Add click handler to layer item
+        layerItem.onclick = (e) => {
+            // Only select layer if not clicking on controls or settings
+            if (!e.target.closest('.layer-controls') && !e.target.closest('.layer-settings')) {
+                selectLayer(index);
+            }
+        };
+        
+        // Assemble layer item
+        layerItem.appendChild(layerHeader);
+        layerItem.appendChild(layerVisualizer);
+        layerItem.appendChild(layerSettings);
+        
+        layerList.appendChild(layerItem);
+        
+        // Setup visualizer for this layer
+        setupLayerVisualizer(index);
+    });
+    
+    // Update layer count
+    document.getElementById('layerCount').textContent = song.layers.length;
+}
+
+        // Setup visualizer for a specific layer
+        function setupLayerVisualizer(layerIndex) {
+            const visualizerContainer = document.getElementById(`layer-visualizer-${layerIndex}`);
+            if (!visualizerContainer) return;
             
-            song.layers.forEach((layer, index) => {
-                const layerItem = document.createElement('div');
-                layerItem.className = `layer-item ${index === currentLayer ? 'active' : ''}`;
-                layerItem.onclick = () => selectLayer(index);
-                
-                const instrument = instruments[layer.instrument];
-                
-                layerItem.innerHTML = `
-                    <div class="layer-header">
-                        <div class="layer-name">
-                            <div class="layer-color-indicator" style="background: ${layer.color || instrument.color};"></div>
-                            ${instrument.icon} ${layer.name}
-                        </div>
-                        <div class="layer-controls">
-                            <button class="layer-control-btn ${layer.mute ? 'active' : ''}" onclick="toggleMute(${index})" title="Mute">M</button>
-                            <button class="layer-control-btn ${layer.solo ? 'active' : ''}" onclick="toggleSolo(${index})" title="Solo">S</button>
-                            <button class="layer-control-btn ${layer.locked ? 'active' : ''}" onclick="toggleLock(${index})" title="Lock">L</button>
-                        </div>
-                    </div>
-                    <div class="layer-settings">
-                        <div class="setting-row">
-                            <span class="setting-label">Inst:</span>
-                            <select class="setting-input" onchange="changeLayerInstrument(${index}, this.value)">
-                                ${instruments.map((inst, j) => 
-                                    `<option value="${j}" ${layer.instrument === j ? 'selected' : ''}>${inst.icon} ${inst.name}</option>`
-                                ).join('')}
-                            </select>
-                        </div>
-                        <div class="setting-row">
-                            <span class="setting-label">Vol:</span>
-                            <input type="range" class="setting-slider" min="0" max="100" value="${layer.volume}" onchange="changeLayerVolume(${index}, this.value)">
-                        </div>
-                    </div>
-                `;
-                
-                layerList.appendChild(layerItem);
-            });
+            // Clear existing visualizer
+            visualizerContainer.innerHTML = '';
             
-            // Update layer count
-            document.getElementById('layerCount').textContent = song.layers.length;
+            // Create visualizer bars
+            const barCount = 8;
+            for (let i = 0; i < barCount; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'layer-visualizer-bar';
+                bar.style.width = '10px';
+                bar.style.height = '2px';
+                bar.style.margin = '0 1px';
+                bar.style.background = 'var(--accent-color)';
+                bar.style.transition = 'height 0.1s ease-out';
+                bar.style.borderRadius = '2px 2px 0 0';
+                bar.style.display = 'inline-block';
+                visualizerContainer.appendChild(bar);
+            }
         }
 
         // Select layer
@@ -3745,6 +4108,12 @@
                 canvas.style.cursor = 'default';
             } else if (tool === 'hand') {
                 canvas.style.cursor = 'grab';
+            }
+            
+            // Hide selection box when switching tools
+            if (tool !== 'select') {
+                const selectionBox = document.getElementById('selection-box');
+                selectionBox.style.display = 'none';
             }
             
             updateStatusBar();
@@ -4192,7 +4561,7 @@
                 },
                 tracks: [{
                     name: song.title || 'Untitled',
-                    instrument: 0,
+                                        instrument: 0,
                     notes: []
                 }]
             };
@@ -4241,7 +4610,7 @@
             // Create schematic
             const schematic = {
                 version: '1.0',
-                song: song.title                 || 'Untitled',
+                song: song.title || 'Untitled',
                 length: song.length,
                 layers: song.layers.map(layer => ({
                     name: layer.name,
@@ -4419,8 +4788,6 @@
             setUint32(buffer.sampleRate * buffer.numberOfChannels * 2);
             // block align
             setUint16(buffer.numberOfChannels * 2);
-            // bits per sample
-            setUint16(16);
             // bits per sample
             setUint16(16);
             
